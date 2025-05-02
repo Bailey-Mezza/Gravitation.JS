@@ -1,59 +1,7 @@
-@keyframes orbit {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+body {
+    margin: 0px;
 }
 
-.background {
-    background-color: black;
-    width: 500px;
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+canvas {
+    border: 1px solid black;
 }
-
-.planet-container {
-    position: relative;
-    width: 100px;
-    height: 100px;
-}
-
-/* This wrapper rotates, carrying the moon with it */
-.orbit-container {
-    position: absolute;
-    width: 150px;  /* Size defines the orbit distance */
-    height: 150px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: orbit 4s linear infinite;
-}
-
-.planet {
-    width: 100px;
-    height: 100px;
-    background-color: aqua;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.moon {
-    width: 30px;
-    height: 30px;
-    background-color: gray;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 100%; /* Places moon at the edge of orbit */
-    transform: translate(-50%, -50%);
-}
-/* .planet:hover{
-    transform: scale(1.1);
-}
-
-.moon:hover{
-    transform: scale(1.1);
-} */
