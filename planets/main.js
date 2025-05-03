@@ -89,9 +89,11 @@ function Planet(x, y, radius) {
     this.radius = radius;
     this.color = colorArray[Math.floor(Math.random() * colorArray.length)];
     this.radians = Math.random() * Math.PI * 2;
-    this.velocity = 0.05;
     this.distancefromCenter = {x: randomIntFromRange(125, 200), y: randomIntFromRange(125, 200)};
+    const distance = Math.sqrt(this.distancefromCenter.x * this.distancefromCenter.x + this.distancefromCenter.y * this.distancefromCenter.y);
+    this.velocity = 3 / distance;
     this.origin = {x: x, y: y};
+
 
     this.update = function () {
         //Move points over time
