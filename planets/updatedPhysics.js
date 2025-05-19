@@ -30,49 +30,61 @@ var colorArray = [
     '#8D99AE'
 ]
 
+const G = 5;
+
 //event listeners
-window.addEventListener('mousemove', 
+window.addEventListener('mousemove',
     function (event) {
         mouse.x = event.x;
         mouse.y = event.y;
-})
+    })
 
-window.addEventListener('resize', 
+window.addEventListener('resize',
     function () {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-})
+    })
+
+
 
 //Utility Functions
-function randomIntFromRange(min,max) {
-    return Math.floor(Math.random() * (max-min+1) + min);
+function randomIntFromRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-//Objects
-function Sun(x, y, radius) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.color = 'rgb(237, 223, 133)';
+function getDistance(x1, y1, x2, y2) {
+    let xDistance = x2 - x1;
+    let yDistance = y2 - y1;
 
-    this.update = () => {
-        this.draw();
+    return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
+
+
+//Objects
+class Body {
+    constructor(mass, position, velocity, radius) {
+        this.mass = mass;
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = radius;
+        this.color = 'rgb(237, 223, 133)';
     }
 
-    this.draw = () => {
+    draw() {
         const gradient = content.createRadialGradient(
-            this.x, this.y, 0,          
-            this.x, this.y, this.radius * 2
+            this.position.x, this.position.y, 0,
+            this.position.x, this.position.y, this.radius * 2
         );
         gradient.addColorStop(0, 'rgba(255, 255, 150, 1)');
         gradient.addColorStop(0.5, this.color);
         gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
-    
+
         content.shadowColor = 'rgba(255, 255, 150, 0.5)';
         content.shadowBlur = 30;
 
         content.beginPath();
-        content.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
         content.fillStyle = this.color;
         content.fill();
         content.closePath();
@@ -81,39 +93,33 @@ function Sun(x, y, radius) {
         content.shadowBlur = 0;
     }
 
-}
-
-function Planet(x, y, radius) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.color = colorArray[Math.floor(Math.random() * colorArray.length)];
-    this.radians = Math.random() * Math.PI * 2;
-    this.distancefromCenter = {x: randomIntFromRange(125, 250), y: randomIntFromRange(125, 250)};
-    const distance = Math.sqrt(this.distancefromCenter.x * this.distancefromCenter.x + this.distancefromCenter.y * this.distancefromCenter.y);
-    this.velocity = 3 / distance;
-    this.origin = {x: x, y: y};
-
-
-    this.update = function () {
-        //Move points over time
-        const lastPoint = {x: this.x, y: this.y};
-        this.radians += this.velocity;
-
-        this.x = this.origin.x + Math.cos(this.radians) * this.distancefromCenter.x;
-        this.y = this.origin.y + Math.sin(this.radians) * this.distancefromCenter.y;
-        this.draw(lastPoint);
+    update() {
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.draw();
     }
 
-    this.draw = lastPoint => {
-        content.beginPath();
-        content.strokeStyle = this.color;
-        content.lineWidth = radius;
-        content.moveTo(lastPoint.x, lastPoint.y);
-        content.lineTo(this.x, this.y);
-        content.stroke();
-        content.closePath();
+    gravitate(child) {
+        // Vector from child to sun
+        let dx = this.position.x - child.position.x;
+        let dy = this.position.y - child.position.y;
+
+        // Distance between child and sun
+        let r = Math.sqrt(dx * dx + dy * dy);
+
+        // Avoid division by zero
+        if (r === 0) return;
+
+        // Force magnitude (mass can be included if needed)
+        let force = G * this.mass * child.mass / (r * r);
+
+        let ax = force * dx / r / child.mass;
+        let ay = force * dy / r / child.mass;
+
+        child.velocity.x += ax;
+        child.velocity.y += ay;
     }
+
 }
 
 function FarStars(x, y, radius) {
@@ -131,11 +137,12 @@ function FarStars(x, y, radius) {
 }
 
 //Implementation
-let sun, planets, distantStars;
+let sun, planet, planets, distantStars;
 function init() {
     distantStars = [], planets = [];
-    const numofplanets = randomIntFromRange(5,10);
+    //const numofplanets = randomIntFromRange(5,10);
 
+    //Far stars
     for (let index = 0; index < 200; index++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
@@ -143,11 +150,35 @@ function init() {
         distantStars.push(new FarStars(x, y, radius));
     }
 
-    sun = new Sun(canvas.width/2, canvas.height/2, 40);
-    for (let index = 0; index < numofplanets; index++) {
-        const radius = 5;
-        planets.push(new Planet(canvas.width/2, canvas.height/2, radius));
-    }
+    //Sun variables and declaration
+    const sunMass = 100;
+    const sunPos = { x: canvas.width / 2, y: canvas.height / 2 };
+    const sunVelocity = { x: 0, y: 0 };
+    const sunRadius = 50;
+    sun = new Body(sunMass, sunPos, sunVelocity, sunRadius);
+
+    //Planet variables and declaration
+    const planetMass = 10;
+    const planetRadius = 10;
+    const maxRadius = Math.min(canvas.width, canvas.height) / 2 - planetRadius;
+    const r = randomIntFromRange(sunRadius, maxRadius);
+    const theta = Math.random() * Math.PI * 2;
+    const planetPos = { x: sunPos.x + r * Math.cos(theta), y: sunPos.y + r * Math.sin(theta) };
+    const orbitalSpeed = Math.sqrt(G * sunMass / r);
+
+    // Direction perpendicular to radius vector (swap dx/dy and negate one)
+    const planetVelocity = {
+        x: -orbitalSpeed * Math.sin(theta),
+        y: orbitalSpeed * Math.cos(theta)
+    };
+
+    planet = new Body(planetMass, planetPos, planetVelocity, planetRadius)
+
+
+    // for (let index = 0; index < numofplanets; index++) {
+    //     const radius = 5;
+    //     planets.push(new Planet(canvas.width/2, canvas.height/2, radius));
+    // }
 }
 
 //Animate loop
@@ -161,10 +192,14 @@ function animate() {
         farStar.draw();
     })
 
+    sun.gravitate(planet);
     sun.update();
-    planets.forEach(planet => {
-        planet.update();
-    });
+    planet.update();
+    console.log(planet.velocity);
+
+    // planets.forEach(planet => {
+    //     planet.update();
+    // });
 }
 
 init();
