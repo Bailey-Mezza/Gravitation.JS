@@ -30,7 +30,7 @@ var colorArray = [
     '#8D99AE'
 ]
 
-const G = 5;
+const G = 0.5;
 
 //event listeners
 window.addEventListener('mousemove',
@@ -151,34 +151,30 @@ function init() {
     }
 
     //Sun variables and declaration
-    const sunMass = 100;
+    const sunMass = 10000;
     const sunPos = { x: canvas.width / 2, y: canvas.height / 2 };
     const sunVelocity = { x: 0, y: 0 };
     const sunRadius = 50;
     sun = new Body(sunMass, sunPos, sunVelocity, sunRadius);
 
     //Planet variables and declaration
-    const planetMass = 10;
-    const planetRadius = 10;
-    const maxRadius = Math.min(canvas.width, canvas.height) / 2 - planetRadius;
-    const r = randomIntFromRange(sunRadius, maxRadius);
-    const theta = Math.random() * Math.PI * 2;
-    const planetPos = { x: sunPos.x + r * Math.cos(theta), y: sunPos.y + r * Math.sin(theta) };
-    const orbitalSpeed = Math.sqrt(G * sunMass / r);
+    for (let index = 0; index < 1; index++) {
+        const planetMass = randomIntFromRange(20, 40);
+        const planetRadius = 10;
+        const maxRadius = Math.min(canvas.width, canvas.height) / 2 - planetRadius;
+        const minimumOrbit = sunRadius + 100;
+        const r = randomIntFromRange(minimumOrbit, maxRadius);
+        const theta = Math.random() * Math.PI * 2;
+        const planetPos = { x: sunPos.x + r * Math.cos(theta), y: sunPos.y + r * Math.sin(theta) };
 
-    // Direction perpendicular to radius vector (swap dx/dy and negate one)
-    const planetVelocity = {
-        x: -orbitalSpeed * Math.sin(theta),
-        y: orbitalSpeed * Math.cos(theta)
-    };
+        const orbitalSpeed = Math.sqrt(G * sunMass / r);
+        const planetVelocity = {
+            x: -orbitalSpeed * Math.sin(theta),
+            y: orbitalSpeed * Math.cos(theta)
+        };
 
-    planet = new Body(planetMass, planetPos, planetVelocity, planetRadius)
-
-
-    // for (let index = 0; index < numofplanets; index++) {
-    //     const radius = 5;
-    //     planets.push(new Planet(canvas.width/2, canvas.height/2, radius));
-    // }
+        planets.push(new Body(planetMass, planetPos, planetVelocity, planetRadius));
+    }
 }
 
 //Animate loop
@@ -191,15 +187,18 @@ function animate() {
     distantStars.forEach(farStar => {
         farStar.draw();
     })
-
-    sun.gravitate(planet);
+    
     sun.update();
-    planet.update();
-    console.log(planet.velocity);
 
-    // planets.forEach(planet => {
-    //     planet.update();
-    // });
+    planets.forEach(planet => {
+        sun.gravitate(planet);
+        planets.forEach(otherPlanet => {
+            if (planet !== otherPlanet) {
+            planet.gravitate(otherPlanet);
+            }
+        })
+        planet.update();
+    });
 }
 
 init();
