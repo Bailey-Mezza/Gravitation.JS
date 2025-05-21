@@ -30,7 +30,10 @@ var colorArray = [
     '#8D99AE'
 ]
 
-const G = 0.5;
+const G = 0.05;
+
+//paused flag
+let isPaused = false;
 
 //event listeners
 window.addEventListener('mousemove',
@@ -44,6 +47,12 @@ window.addEventListener('resize',
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     })
+
+    window.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        isPaused = !isPaused; // toggle pause
+    }
+});
 
 
 
@@ -115,12 +124,90 @@ class Body {
 
         let ax = force * dx / r / child.mass;
         let ay = force * dy / r / child.mass;
+        // let bx = -force * dx / r / child.mass;
+        // let by = -force * dy / r / child.mass;
 
         child.velocity.x += ax;
         child.velocity.y += ay;
+        // this.velocity.x += bx;
+        // this.velocity.x += by;
     }
 
 }
+
+class Sun extends Body {
+    constructor(mass, position, velocity, radius) {
+        super(mass, position, velocity, radius);
+        this.color = 'rgb(237, 223, 133)';
+    }
+
+    draw() {
+        // More intense glow for the sun
+        const gradient = content.createRadialGradient(
+            this.position.x, this.position.y, 0,
+            this.position.x, this.position.y, this.radius * 2.5
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 200, 1)');
+        gradient.addColorStop(0.5, this.color);
+        gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+
+        content.shadowColor = 'rgba(255, 255, 100, 0.8)';
+        content.shadowBlur = 50;
+
+        content.beginPath();
+        content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        content.fillStyle = gradient;
+        content.fill();
+        content.closePath();
+
+        content.shadowColor = 'transparent';
+        content.shadowBlur = 0;
+    }
+}
+
+class Planet extends Body {
+    constructor(mass, position, velocity, radius) {
+        super(mass, position, velocity, radius);
+        this.color = colorArray[randomIntFromRange(0, colorArray.length)];
+    }
+
+    draw() {
+        // Simple solid circle for a planet
+        content.beginPath();
+        content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        content.fillStyle = this.color;
+        content.fill();
+        content.closePath();
+    }
+
+    gravitate(child) {
+        // Vector from child to sun
+        let dx = this.position.x - child.position.x;
+        let dy = this.position.y - child.position.y;
+
+        // Distance between child and sun
+        let r = Math.sqrt(dx * dx + dy * dy);
+
+        // Avoid division by zero
+        if (r === 0) return;
+
+        // Force magnitude (mass can be included if needed)
+        let force = G * this.mass * child.mass / (r * r);
+
+        let ax = force * dx / r / child.mass;
+        let ay = force * dy / r / child.mass;
+        let bx = -force * dx / r / child.mass;
+        let by = -force * dy / r / child.mass;
+
+        child.velocity.x += ax;
+        child.velocity.y += ay;
+        this.velocity.x += bx;
+        this.velocity.x += by;
+    }
+
+}
+
+
 
 function FarStars(x, y, radius) {
     this.x = x;
@@ -155,10 +242,10 @@ function init() {
     const sunPos = { x: canvas.width / 2, y: canvas.height / 2 };
     const sunVelocity = { x: 0, y: 0 };
     const sunRadius = 50;
-    sun = new Body(sunMass, sunPos, sunVelocity, sunRadius);
+    sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
 
     //Planet variables and declaration
-    for (let index = 0; index < 1; index++) {
+    for (let index = 0; index < 3; index++) {
         const planetMass = randomIntFromRange(20, 40);
         const planetRadius = 10;
         const maxRadius = Math.min(canvas.width, canvas.height) / 2 - planetRadius;
@@ -173,13 +260,14 @@ function init() {
             y: orbitalSpeed * Math.cos(theta)
         };
 
-        planets.push(new Body(planetMass, planetPos, planetVelocity, planetRadius));
+        planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
     }
 }
 
 //Animate loop
 function animate() {
     requestAnimationFrame(animate);
+    if (isPaused) return;
     content.fillStyle = 'rgba(0, 0, 0, 0.05)';
     content.fillRect(0, 0, canvas.width, canvas.height);
     //content.clearRect(0, 0, innerWidth, innerHeight);
@@ -187,16 +275,20 @@ function animate() {
     distantStars.forEach(farStar => {
         farStar.draw();
     })
-    
+
     sun.update();
 
     planets.forEach(planet => {
         sun.gravitate(planet);
-        planets.forEach(otherPlanet => {
-            if (planet !== otherPlanet) {
-            planet.gravitate(otherPlanet);
+        for (let i = 0; i < planets.length; i++) {
+            const planetA = planets[i];
+            sun.gravitate(planetA);
+            for (let j = i + 1; j < planets.length; j++) {
+                const planetB = planets[j];
+                planetA.gravitate(planetB);
             }
-        })
+            planetA.update();
+        }
         planet.update();
     });
 }
