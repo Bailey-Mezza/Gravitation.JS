@@ -46,7 +46,7 @@ window.addEventListener('resize',
         canvas.height = window.innerHeight;
     })
 
-window.addEventListener('keydown', function(event) {
+window.addEventListener('keydown', function (event) {
     if (event.code === 'Space') {
         isPaused = !isPaused; // toggle pause
     }
@@ -151,13 +151,18 @@ class Planet extends Body {
     constructor(mass, position, velocity, radius) {
         super(mass, position, velocity, radius);
         this.color = colorArray[randomIntFromRange(0, colorArray.length)];
+        this.highlighted = false;
     }
 
     draw() {
         // Simple solid circle for a planet
         content.beginPath();
         content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        content.fillStyle = this.color;
+        if (this.highlighted) {
+            content.fillStyle = 'rgb(255, 255, 255)'
+        } else {
+            content.fillStyle = this.color;
+        }
         content.fill();
         content.closePath();
     }
@@ -249,7 +254,6 @@ function init() {
 //Animate loop
 function animate() {
     requestAnimationFrame(animate);
-    if (isPaused) return;
     content.fillStyle = 'rgba(0, 0, 0, 0.05)';
     content.fillRect(0, 0, canvas.width, canvas.height);
     //content.clearRect(0, 0, innerWidth, innerHeight);
@@ -257,6 +261,22 @@ function animate() {
     distantStars.forEach(farStar => {
         farStar.draw();
     })
+
+    //pause causes animation to skip but still allows user interaction
+    if (isPaused) {
+        planets.forEach(planet => {
+            const isHovered = getDistance(mouse.x, mouse.y, planet.position.x, planet.position.y) < planet.radius + 10;
+            if (isHovered) {
+                planet.highlighted = true;
+            } else {
+                planet.highlighted = false;
+            }
+            planet.draw();
+        });
+        sun.draw();
+        return;
+    }
+
 
     sun.update();
 
