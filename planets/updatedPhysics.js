@@ -31,9 +31,7 @@ var colorArray = [
 ]
 
 const G = 0.05;
-
-//paused flag
-let isPaused = false;
+isPaused = false;
 
 //event listeners
 window.addEventListener('mousemove',
@@ -48,13 +46,11 @@ window.addEventListener('resize',
         canvas.height = window.innerHeight;
     })
 
-    window.addEventListener('keydown', function(event) {
+window.addEventListener('keydown', function(event) {
     if (event.code === 'Space') {
         isPaused = !isPaused; // toggle pause
     }
 });
-
-
 
 //Utility Functions
 function randomIntFromRange(min, max) {
@@ -81,25 +77,11 @@ class Body {
     }
 
     draw() {
-        const gradient = content.createRadialGradient(
-            this.position.x, this.position.y, 0,
-            this.position.x, this.position.y, this.radius * 2
-        );
-        gradient.addColorStop(0, 'rgba(255, 255, 150, 1)');
-        gradient.addColorStop(0.5, this.color);
-        gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
-
-        content.shadowColor = 'rgba(255, 255, 150, 0.5)';
-        content.shadowBlur = 30;
-
         content.beginPath();
-        content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
+        content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
         content.fillStyle = this.color;
         content.fill();
         content.closePath();
-
-        content.shadowColor = 'transparent';
-        content.shadowBlur = 0;
     }
 
     update() {
