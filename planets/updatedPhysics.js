@@ -192,6 +192,53 @@ class Planet extends Body {
         this.velocity.x += by;
     }
 
+    predictPath(gravitySources, steps = 10000) {
+        this.predictedPath = [];
+
+        let tempPos = { x: this.position.x, y: this.position.y };
+        let tempVel = { x: this.velocity.x, y: this.velocity.y };
+
+        for (let i = 0; i < steps; i++) {
+            for (let source of gravitySources) {
+                if (source === this) continue;
+
+                let dx = source.position.x - tempPos.x;
+                let dy = source.position.y - tempPos.y;
+                let r = Math.sqrt(dx * dx + dy * dy);
+                if (r === 0) continue;
+
+                let force = G * source.mass * this.mass / (r * r);
+                let ax = force * dx / r / this.mass;
+                let ay = force * dy / r / this.mass;
+
+                tempVel.x += ax;
+                tempVel.y += ay;
+            }
+
+            tempPos.x += tempVel.x;
+            tempPos.y += tempVel.y;
+
+            this.predictedPath.push({ x: tempPos.x, y: tempPos.y });
+        }
+    }
+
+    drawPredictedPath() {
+        if (!this.predictedPath || this.predictedPath.length < 2) return;
+
+        content.beginPath();
+        content.moveTo(this.predictedPath[0].x, this.predictedPath[0].y);
+        for (let i = 1; i < this.predictedPath.length; i++) {
+            content.lineTo(this.predictedPath[i].x, this.predictedPath[i].y);
+        }
+        content.strokeStyle = this.color;
+        content.lineWidth = 1;
+        content.setLineDash([5, 5]);
+        content.stroke();
+        content.setLineDash([]);
+        content.closePath();
+    }
+
+
 }
 
 
@@ -262,9 +309,18 @@ function animate() {
         farStar.draw();
     })
 
+    if (!isPaused) {
+    planets.forEach(planet => planet.predictedPath = null);
+}
     //pause causes animation to skip but still allows user interaction
     if (isPaused) {
         planets.forEach(planet => {
+            if (!planet.predictedPath) {
+                planet.predictPath([sun, ...planets]);
+            }
+
+            planet.drawPredictedPath();
+
             const isHovered = getDistance(mouse.x, mouse.y, planet.position.x, planet.position.y) < planet.radius + 10;
             if (isHovered) {
                 planet.highlighted = true;
