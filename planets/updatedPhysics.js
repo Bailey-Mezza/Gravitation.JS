@@ -30,14 +30,15 @@ var colorArray = [
     '#8D99AE'
 ]
 
-const G = 0.05;
+const G = 0.2;
 isPaused = false;
 
 //event listeners
 window.addEventListener('mousemove',
     function (event) {
-        mouse.x = event.x;
-        mouse.y = event.y;
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = event.clientX - rect.left;
+        mouse.y = event.clientY - rect.top;
     })
 
 window.addEventListener('resize',
@@ -62,6 +63,31 @@ function getDistance(x1, y1, x2, y2) {
     let yDistance = y2 - y1;
 
     return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
+function applyMutualGravity(parent, child) {
+    // Vector from child to sun
+        let dx = parent.position.x - child.position.x;
+        let dy = parent.position.y - child.position.y;
+
+        // Distance between child and sun
+        let r = Math.sqrt(dx * dx + dy * dy);
+
+        // Avoid division by zero
+        if (r === 0) return;
+
+        // Force magnitude (mass can be included if needed)
+        let force = G * parent.mass * child.mass / (r * r);
+
+        let ax = force * dx / r / child.mass;
+        let ay = force * dy / r / child.mass;
+        let bx = -force * dx / r / child.mass;
+        let by = -force * dy / r / child.mass;
+
+        child.velocity.x += ax;
+        child.velocity.y += ay;
+        parent.velocity.x += bx;
+        parent.velocity.x += by;
 }
 
 
@@ -115,6 +141,14 @@ class Body {
         // this.velocity.x += by;
     }
 
+    clone() {
+        return new this.constructor(
+            this.mass,
+            { x: this.position.x, y: this.position.y },
+            { x: this.velocity.x, y: this.velocity.y },
+            this.radius
+        );
+    }
 }
 
 class Sun extends Body {
@@ -168,58 +202,7 @@ class Planet extends Body {
     }
 
     gravitate(child) {
-        // Vector from child to sun
-        let dx = this.position.x - child.position.x;
-        let dy = this.position.y - child.position.y;
-
-        // Distance between child and sun
-        let r = Math.sqrt(dx * dx + dy * dy);
-
-        // Avoid division by zero
-        if (r === 0) return;
-
-        // Force magnitude (mass can be included if needed)
-        let force = G * this.mass * child.mass / (r * r);
-
-        let ax = force * dx / r / child.mass;
-        let ay = force * dy / r / child.mass;
-        let bx = -force * dx / r / child.mass;
-        let by = -force * dy / r / child.mass;
-
-        child.velocity.x += ax;
-        child.velocity.y += ay;
-        this.velocity.x += bx;
-        this.velocity.x += by;
-    }
-
-    predictPath(gravitySources, steps = 10000) {
-        this.predictedPath = [];
-
-        let tempPos = { x: this.position.x, y: this.position.y };
-        let tempVel = { x: this.velocity.x, y: this.velocity.y };
-
-        for (let i = 0; i < steps; i++) {
-            for (let source of gravitySources) {
-                if (source === this) continue;
-
-                let dx = source.position.x - tempPos.x;
-                let dy = source.position.y - tempPos.y;
-                let r = Math.sqrt(dx * dx + dy * dy);
-                if (r === 0) continue;
-
-                let force = G * source.mass * this.mass / (r * r);
-                let ax = force * dx / r / this.mass;
-                let ay = force * dy / r / this.mass;
-
-                tempVel.x += ax;
-                tempVel.y += ay;
-            }
-
-            tempPos.x += tempVel.x;
-            tempPos.y += tempVel.y;
-
-            this.predictedPath.push({ x: tempPos.x, y: tempPos.y });
-        }
+        applyMutualGravity(this, child);
     }
 
     drawPredictedPath() {
@@ -242,7 +225,6 @@ class Planet extends Body {
 }
 
 
-
 function FarStars(x, y, radius) {
     this.x = x;
     this.y = y;
@@ -256,6 +238,7 @@ function FarStars(x, y, radius) {
         content.closePath();
     }
 }
+
 
 //Implementation
 let sun, planet, planets, distantStars;
@@ -298,6 +281,39 @@ function init() {
     }
 }
 
+
+function predictAllPaths(planets, sun, steps = 1000) {
+    const predictedPlanets = planets.map(p => p.clone());
+    const predictedSun = sun.clone();
+    const allBodies = [predictedSun, ...predictedPlanets];
+    const paths = predictedPlanets.map(() => []);
+
+    for (let step = 0; step < steps; step++) {
+        // Symmetric gravity application
+        for (let i = 0; i < allBodies.length; i++) {
+            for (let j = i + 1; j < allBodies.length; j++) {
+                const a = allBodies[i];
+                const b = allBodies[j];
+
+                applyMutualGravity(a, b);
+            }
+        }
+
+        // Update position and store paths
+        predictedPlanets.forEach((planet, i) => {
+            planet.position.x += planet.velocity.x;
+            planet.position.y += planet.velocity.y;
+            paths[i].push({ x: planet.position.x, y: planet.position.y });
+        });
+    }
+
+    // Assign to real planets
+    planets.forEach((planet, i) => {
+        planet.predictedPath = paths[i];
+    });
+}
+
+
 //Animate loop
 function animate() {
     requestAnimationFrame(animate);
@@ -310,18 +326,16 @@ function animate() {
     })
 
     if (!isPaused) {
-    planets.forEach(planet => planet.predictedPath = null);
-}
+        planets.forEach(planet => planet.predictedPath = null);
+    }
     //pause causes animation to skip but still allows user interaction
     if (isPaused) {
+        if (!planets[0].predictedPath) {
+            predictAllPaths(planets, sun);
+        }
         planets.forEach(planet => {
-            if (!planet.predictedPath) {
-                planet.predictPath([sun, ...planets]);
-            }
-
             planet.drawPredictedPath();
-
-            const isHovered = getDistance(mouse.x, mouse.y, planet.position.x, planet.position.y) < planet.radius + 10;
+            const isHovered = getDistance(mouse.x, mouse.y, planet.position.x, planet.position.y) < planet.radius;
             if (isHovered) {
                 planet.highlighted = true;
             } else {
@@ -336,19 +350,15 @@ function animate() {
 
     sun.update();
 
-    planets.forEach(planet => {
-        sun.gravitate(planet);
-        for (let i = 0; i < planets.length; i++) {
-            const planetA = planets[i];
-            sun.gravitate(planetA);
-            for (let j = i + 1; j < planets.length; j++) {
-                const planetB = planets[j];
-                planetA.gravitate(planetB);
-            }
-            planetA.update();
+    for (let i = 0; i < planets.length; i++) {
+        const planetA = planets[i];
+        sun.gravitate(planetA);
+        for (let j = i + 1; j < planets.length; j++) {
+            const planetB = planets[j];
+            planetA.gravitate(planetB);
         }
-        planet.update();
-    });
+        planetA.update();
+    }
 }
 
 init();
