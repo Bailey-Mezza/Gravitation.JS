@@ -31,23 +31,23 @@ var colorArray = [
 ]
 
 const G = 0.2;
-isPaused = false;
+let isPaused = false;
 
 //event listeners
-window.addEventListener('mousemove',
+addEventListener('mousemove',
     function (event) {
         const rect = canvas.getBoundingClientRect();
         mouse.x = event.clientX - rect.left;
         mouse.y = event.clientY - rect.top;
     })
 
-window.addEventListener('resize',
+addEventListener('resize',
     function () {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     })
 
-window.addEventListener('keydown', function (event) {
+addEventListener('keydown', function (event) {
     if (event.code === 'Space') {
         isPaused = !isPaused; // toggle pause
     }
@@ -184,7 +184,7 @@ class Sun extends Body {
 class Planet extends Body {
     constructor(mass, position, velocity, radius) {
         super(mass, position, velocity, radius);
-        this.color = colorArray[randomIntFromRange(0, colorArray.length)];
+        this.color = colorArray[randomIntFromRange(0, colorArray.length-1)];
         this.highlighted = false;
     }
 
@@ -262,7 +262,7 @@ function init() {
     sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
 
     //Planet variables and declaration
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < 3 ; index++) {
         const planetMass = randomIntFromRange(20, 40);
         const planetRadius = 10;
         const maxRadius = Math.min(canvas.width, canvas.height) / 2 - planetRadius;
@@ -282,7 +282,7 @@ function init() {
 }
 
 
-function predictAllPaths(planets, sun, steps = 1000) {
+function predictAllPaths(planets, sun, steps = 10000) { 
     const predictedPlanets = planets.map(p => p.clone());
     const predictedSun = sun.clone();
     const allBodies = [predictedSun, ...predictedPlanets];
