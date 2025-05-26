@@ -32,6 +32,7 @@ var colorArray = [
 
 const G = 0.2;
 let isPaused = false;
+let scale = 1;
 
 //event listeners
 addEventListener('mousemove',
@@ -51,7 +52,36 @@ addEventListener('keydown', function (event) {
     if (event.code === 'Space') {
         isPaused = !isPaused; // toggle pause
     }
+    if (isPaused) {
+        const panSpeed = 20 / scale; // speed adjusted to zoom level
+
+    switch (event.code) {
+        case 'ArrowUp':
+        case 'KeyW':
+            camera.y -= panSpeed;
+            break;
+        case 'ArrowDown':
+        case 'KeyS':
+            camera.y += panSpeed;
+            break;
+        case 'ArrowLeft':
+        case 'KeyA':
+            camera.x -= panSpeed;
+            break;
+        case 'ArrowRight':
+        case 'KeyD':
+            camera.x += panSpeed;
+            break;
+        case 'Digit1':
+            scale = Math.min(scale + 0.05, 2);
+            break;
+        case 'Digit2':
+            scale = Math.max(scale - 0.05, 0.1);
+            break;
+    }
+    }
 });
+
 
 //Utility Functions
 function randomIntFromRange(min, max) {
@@ -93,6 +123,11 @@ function applyMutualGravity(parent, child) {
 
 
 //Objects
+let camera = {
+    x: canvas.width/2,
+    y: canvas.height/2
+};
+
 class Body {
     constructor(mass, position, velocity, radius) {
         this.mass = mass;
@@ -247,9 +282,9 @@ function init() {
     //const numofplanets = randomIntFromRange(5,10);
 
     //Far stars
-    for (let index = 0; index < 200; index++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
+    for (let index = 0; index < 4000; index++) {
+        const x = randomIntFromRange(-10000, 10000);
+        const y = randomIntFromRange(-5000, 5000);
         const radius = Math.random() * 1.5;
         distantStars.push(new FarStars(x, y, radius));
     }
@@ -317,9 +352,18 @@ function predictAllPaths(planets, sun, steps = 10000) {
 //Animate loop
 function animate() {
     requestAnimationFrame(animate);
-    content.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    content.setTransform(1, 0, 0, 1, 0, 0);
+    let alpha = 0.05
+    if (isPaused) {
+        alpha = 1;
+    }
+    content.fillStyle = `rgba(0, 0, 0, ${alpha})`;
     content.fillRect(0, 0, canvas.width, canvas.height);
     //content.clearRect(0, 0, innerWidth, innerHeight);
+
+    content.translate(canvas.width / 2, canvas.height / 2);
+    content.scale(scale, scale);
+    content.translate(-camera.x, -camera.y);
 
     distantStars.forEach(farStar => {
         farStar.draw();
