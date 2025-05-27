@@ -120,6 +120,13 @@ function applyMutualGravity(parent, child) {
         parent.velocity.x += by;
 }
 
+function screenToWorld(x, y) {
+    return {
+        x: (x - canvas.width / 2) / scale + camera.x,
+        y: (y - canvas.height / 2) / scale + camera.y
+    };
+}
+
 
 
 //Objects
@@ -377,9 +384,10 @@ function animate() {
         if (!planets[0].predictedPath) {
             predictAllPaths(planets, sun);
         }
+        const worldMouse = screenToWorld(mouse.x, mouse.y);
         planets.forEach(planet => {
             planet.drawPredictedPath();
-            const isHovered = getDistance(mouse.x, mouse.y, planet.position.x, planet.position.y) < planet.radius;
+            const isHovered = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y) < planet.radius;
             if (isHovered) {
                 planet.highlighted = true;
             } else {
@@ -396,6 +404,7 @@ function animate() {
 
     for (let i = 0; i < planets.length; i++) {
         const planetA = planets[i];
+        planetA.highlighted = false;
         sun.gravitate(planetA);
         for (let j = i + 1; j < planets.length; j++) {
             const planetB = planets[j];
