@@ -83,6 +83,8 @@ addEventListener('keydown', function (event) {
 });
 
 
+
+
 //Utility Functions
 function randomIntFromRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -413,6 +415,26 @@ function animate() {
         planetA.update();
     }
 }
+
+
+addEventListener('click', function (event) {
+    if (!isPaused) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const screenX = event.clientX - rect.left;
+    const screenY = event.clientY - rect.top;
+
+    const worldClick = screenToWorld(screenX, screenY);
+
+    for (let planet of planets) {
+        const dist = getDistance(worldClick.x, worldClick.y, planet.position.x, planet.position.y);
+        if (dist < planet.radius) {
+            console.log('Clicked planet:', planet);
+            break; // stop after first match
+        }
+    }
+});
+
 
 init();
 animate();
