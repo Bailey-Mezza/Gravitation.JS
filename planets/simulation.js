@@ -77,12 +77,18 @@ export function predictAllPaths(planets, sun, steps = 10000) {
 }
 
 
-export function animate({ content, canvas, camera, sun, planets, distantStars, mouse, scaleRef, isPausedRef }) {
+export function animate({ content, canvas, camera, sun, planets, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
   function loop() {
     requestAnimationFrame(loop);
 
     const scale = scaleRef.value;
     const isPaused = isPausedRef.value;
+    const followTarget = followTargetRef.value;
+
+    if (followTarget) {
+      camera.x = followTarget.position.x;
+      camera.y = followTarget.position.y;
+    }
 
     content.setTransform(1, 0, 0, 1, 0, 0);
     content.fillStyle = `rgba(0, 0, 0, ${isPaused ? 1 : 0.05})`;
