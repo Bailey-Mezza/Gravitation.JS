@@ -3,10 +3,16 @@ import { screenToWorld, camera } from './camera.js';
 import { getDistance } from './utils.js';
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef) {
+    let draggingPlanet = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
     window.addEventListener('mousemove', (event) => {
         const rect = canvas.getBoundingClientRect();
         mouse.x = event.clientX - rect.left;
         mouse.y = event.clientY - rect.top;
+
+
     });
 
     window.addEventListener('resize', () => {
@@ -43,7 +49,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         if (event.code === 'KeyO' && isPausedRef.value) {
             const scale = scaleRef.value;
             const worldMouse = screenToWorld(mouse.x, mouse.y, scale);
-           
+
             for (let planet of planets) {
                 const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
                 // console.log('Mouse world position:', worldMouse);
@@ -64,19 +70,38 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
     });
 
-    window.addEventListener('click', (event) => {
+    window.addEventListener('mousedown', (event) => {
         if (!isPausedRef.value) return;
         const rect = canvas.getBoundingClientRect();
         const screenX = event.clientX - rect.left;
         const screenY = event.clientY - rect.top;
 
-        const worldClick = screenToWorld(screenX, screenY, scaleRef.value);
+        const worldMouse = screenToWorld(screenX, screenY, scaleRef.value);
         for (let planet of planets) {
-            const dist = getDistance(worldClick.x, worldClick.y, planet.position.x, planet.position.y);
+            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
-                console.log('Clicked planet:', planet);
+                draggingPlanet = planet;
+                offsetX = worldMouse.x - planet.position.x;
+                offsetY = worldMouse.y - planet.position.y;
                 break;
             }
         }
+    });
+
+    window.addEventListener('mousemove', function (event) {
+        const rect = canvas.getBoundingClientRect();
+        const screenX = event.clientX - rect.left;
+        const screenY = event.clientY - rect.top;
+
+        const worldMouse = screenToWorld(screenX, screenY, scaleRef.value);
+
+        if (draggingPlanet) {
+            draggingPlanet.position.x = worldMouse.x - offsetX;
+            draggingPlanet.position.y = worldMouse.y - offsetY;
+        }
+    });
+
+    window.addEventListener('mouseup', function () {
+        draggingPlanet = null;
     });
 }
