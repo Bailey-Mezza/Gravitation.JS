@@ -1,6 +1,6 @@
 import { canvas } from './canvas.js';
 import { screenToWorld, camera } from './camera.js';
-import { getDistance } from './utils.js';
+import { getDistance, getWorldMousePosition } from './utils.js';
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef) {
     let draggingPlanet = null;
@@ -72,30 +72,23 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     window.addEventListener('mousedown', (event) => {
         if (!isPausedRef.value) return;
-        const rect = canvas.getBoundingClientRect();
-        const screenX = event.clientX - rect.left;
-        const screenY = event.clientY - rect.top;
 
-        const worldMouse = screenToWorld(screenX, screenY, scaleRef.value);
+        const worldClick = getWorldMousePosition(event, scaleRef.value);
+
         for (let planet of planets) {
-            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+            const dist = getDistance(worldClick.x, worldClick.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
                 draggingPlanet = planet;
-                offsetX = worldMouse.x - planet.position.x;
-                offsetY = worldMouse.y - planet.position.y;
+                offsetX = worldClick.x - planet.position.x;
+                offsetY = worldClick.y - planet.position.y;
                 break;
             }
         }
     });
 
     window.addEventListener('mousemove', function (event) {
-        const rect = canvas.getBoundingClientRect();
-        const screenX = event.clientX - rect.left;
-        const screenY = event.clientY - rect.top;
-
-        const worldMouse = screenToWorld(screenX, screenY, scaleRef.value);
-
-        if (draggingPlanet) {
+        if (draggingPlanet && isPausedRef.value) {
+            const worldMouse = getWorldMousePosition(event, scaleRef.value);
             draggingPlanet.position.x = worldMouse.x - offsetX;
             draggingPlanet.position.y = worldMouse.y - offsetY;
         }
