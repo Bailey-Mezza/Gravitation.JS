@@ -29,7 +29,8 @@ function start() {
         scaleRef,
         isPausedRef,
         followTarget,
-        camera
+        camera,
+        sun
     );
 
     animate({

@@ -1,8 +1,9 @@
 import { canvas } from './canvas.js';
 import { screenToWorld, camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
+import { predictAllPaths } from './simulation.js';
 
-export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef) {
+export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, sun) {
     let draggingPlanet = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -91,6 +92,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const worldMouse = getWorldMousePosition(event, scaleRef.value);
             draggingPlanet.position.x = worldMouse.x - offsetX;
             draggingPlanet.position.y = worldMouse.y - offsetY;
+            predictAllPaths(planets, sun); 
         }
     });
 
