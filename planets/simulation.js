@@ -109,9 +109,6 @@ export function animate({ content, canvas, camera, sun, planets, distantStars, m
 
       planets.forEach(planet => {
         planet.drawPredictedPath();
-
-        const isHovered = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y) < planet.radius;
-        planet.highlighted = isHovered;
         planet.draw();
       });
 

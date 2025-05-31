@@ -1,20 +1,16 @@
 import { canvas } from './canvas.js';
+import { G } from './constants.js';
 import { screenToWorld, camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
 import { predictAllPaths } from './simulation.js';
+import Planet from './bodies/Planet.js';
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, sun) {
     let draggingPlanet = null;
     let offsetX = 0;
     let offsetY = 0;
+    let didDrag = false;
 
-    window.addEventListener('mousemove', (event) => {
-        const rect = canvas.getBoundingClientRect();
-        mouse.x = event.clientX - rect.left;
-        mouse.y = event.clientY - rect.top;
-
-
-    });
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -49,13 +45,13 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
         if (event.code === 'KeyO' && isPausedRef.value) {
             const scale = scaleRef.value;
-            const worldMouse = screenToWorld(mouse.x, mouse.y, scale);
+            const worldMouse = getWorldMousePosition(event, scaleRef.value);
 
             for (let planet of planets) {
                 const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
                 // console.log('Mouse world position:', worldMouse);
                 // console.log('Planet position:', planet.position);
-                // console.log('Distance:', dist, 'Radius:', planet.radius)
+                console.log('Distance:', dist, 'Radius:', planet.radius)
                 if (dist < planet.radius) {
 
                     if (followTargetRef.value === planet) {
@@ -73,30 +69,80 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     window.addEventListener('mousedown', (event) => {
         if (!isPausedRef.value) return;
+        didDrag = false;
 
-        const worldClick = getWorldMousePosition(event, scaleRef.value);
+        const worldMouse = getWorldMousePosition(event, scaleRef.value);
 
         for (let planet of planets) {
-            const dist = getDistance(worldClick.x, worldClick.y, planet.position.x, planet.position.y);
+            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
+                didDrag = true;
                 draggingPlanet = planet;
-                offsetX = worldClick.x - planet.position.x;
-                offsetY = worldClick.y - planet.position.y;
+                offsetX = worldMouse.x - planet.position.x;
+                offsetY = worldMouse.y - planet.position.y;
                 break;
             }
         }
     });
 
     window.addEventListener('mousemove', function (event) {
+        const worldMouse = getWorldMousePosition(event, scaleRef.value);
+        
+        for (let planet of planets) {
+            planet.highlighted = false;
+        }
+        
+        for (let planet of planets) {
+            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+            if (dist < planet.radius) {
+                planet.highlighted = true;
+                console.log(planet.highlighted);
+                
+                break;
+            }
+        }
+
         if (draggingPlanet && isPausedRef.value) {
-            const worldMouse = getWorldMousePosition(event, scaleRef.value);
             draggingPlanet.position.x = worldMouse.x - offsetX;
             draggingPlanet.position.y = worldMouse.y - offsetY;
-            predictAllPaths(planets, sun); 
+            predictAllPaths(planets, sun);
         }
     });
 
     window.addEventListener('mouseup', function () {
         draggingPlanet = null;
+    });
+
+    window.addEventListener('click', function (event) {
+        if (didDrag || !isPausedRef.value) return;
+
+        const worldMouse = getWorldMousePosition(event, scaleRef.value);
+
+        let clickedOnPlanet = false;
+        for (let planet of planets) {
+            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+            if (dist < planet.radius) {
+                clickedOnPlanet = true;
+                break;
+            }
+        }
+
+        if (!clickedOnPlanet) {
+            const planetMass = 40;
+            const planetRadius = 10;
+            const r = 75;
+            const theta = Math.random() * 2 * Math.PI;
+            const planetPos = {
+                x: worldMouse.x,
+                y: worldMouse.y
+            };
+
+            const orbitalSpeed = Math.sqrt(G * 10000 / r);
+            const planetVelocity = {
+                x: -orbitalSpeed * Math.sin(theta),
+                y: orbitalSpeed * Math.cos(theta),
+            };
+            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+        }
     });
 }
