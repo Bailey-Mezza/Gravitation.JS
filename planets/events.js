@@ -1,6 +1,6 @@
 import { canvas } from './canvas.js';
 import { G } from './constants.js';
-import { screenToWorld, camera } from './camera.js';
+import { camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
 import { predictAllPaths } from './simulation.js';
 import Planet from './bodies/Planet.js';
@@ -10,6 +10,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let offsetX = 0;
     let offsetY = 0;
     let didDrag = false;
+    let lastMouseEvent = null;
 
 
     window.addEventListener('resize', () => {
@@ -44,14 +45,11 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'KeyO' && isPausedRef.value) {
-            const scale = scaleRef.value;
-            const worldMouse = getWorldMousePosition(event, scaleRef.value);
-
             for (let planet of planets) {
-                const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
                 // console.log('Mouse world position:', worldMouse);
                 // console.log('Planet position:', planet.position);
-                console.log('Distance:', dist, 'Radius:', planet.radius)
+                // console.log('Distance:', dist, 'Radius:', planet.radius)
                 if (dist < planet.radius) {
 
                     if (followTargetRef.value === planet) {
@@ -67,19 +65,17 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
     });
 
-    window.addEventListener('mousedown', (event) => {
+    window.addEventListener('mousedown', () => {
         if (!isPausedRef.value) return;
         didDrag = false;
 
-        const worldMouse = getWorldMousePosition(event, scaleRef.value);
-
         for (let planet of planets) {
-            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+            const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
                 didDrag = true;
                 draggingPlanet = planet;
-                offsetX = worldMouse.x - planet.position.x;
-                offsetY = worldMouse.y - planet.position.y;
+                offsetX = lastMouseEvent.x - planet.position.x;
+                offsetY = lastMouseEvent.y - planet.position.y;
                 break;
             }
         }
@@ -87,6 +83,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     window.addEventListener('mousemove', function (event) {
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
+        lastMouseEvent = worldMouse;
         
         for (let planet of planets) {
             planet.highlighted = false;
@@ -96,8 +93,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
                 planet.highlighted = true;
-                console.log(planet.highlighted);
-                
+                //console.log(planet.highlighted);
                 break;
             }
         }
@@ -113,14 +109,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         draggingPlanet = null;
     });
 
-    window.addEventListener('click', function (event) {
+    window.addEventListener('click', function () {
         if (didDrag || !isPausedRef.value) return;
-
-        const worldMouse = getWorldMousePosition(event, scaleRef.value);
 
         let clickedOnPlanet = false;
         for (let planet of planets) {
-            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
+            const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
                 clickedOnPlanet = true;
                 break;
@@ -133,8 +127,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const r = 75;
             const theta = Math.random() * 2 * Math.PI;
             const planetPos = {
-                x: worldMouse.x,
-                y: worldMouse.y
+                x: lastMouseEvent.x,
+                y: lastMouseEvent.y
             };
 
             const orbitalSpeed = Math.sqrt(G * 10000 / r);
