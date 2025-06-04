@@ -1,7 +1,31 @@
 body {
     margin: 0px;
+    overflow: hidden;
 }
 
 canvas {
-    border: 1px solid black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+#planet-editor {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10; /* Higher than canvas */
+    display: none;
+}
+
+#planet-editor input {
+    width: 80px;
+    margin-left: 6px;
+    margin-bottom: 8px;
 }

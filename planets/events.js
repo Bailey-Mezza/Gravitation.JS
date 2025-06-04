@@ -122,8 +122,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (!clickedOnPlanet) {
-            const planetMass = 40;
-            const planetRadius = 10;
+            const planetMass = 1;
+            const planetRadius = 2;
             const r = 75;
             const theta = Math.random() * 2 * Math.PI;
             const planetPos = {
@@ -133,8 +133,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
             const orbitalSpeed = Math.sqrt(G * 10000 / r);
             const planetVelocity = {
-                x: -orbitalSpeed * Math.sin(theta),
-                y: orbitalSpeed * Math.cos(theta),
+                x: 0,
+                y: 0
             };
             planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
         }
