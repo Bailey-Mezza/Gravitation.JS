@@ -4,6 +4,7 @@ import { camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
 import { predictAllPaths } from './simulation.js';
 import Planet from './bodies/Planet.js';
+import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, sun) {
     let draggingPlanet = null;
@@ -63,6 +64,24 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 }
             }
         }
+
+        if (event.code === 'KeyI' && isPausedRef.value) {
+            for (let planet of planets) {
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
+                let selectedPlanet = null;
+                if (dist < planet.radius) {
+                    if (selectedPlanet === planet) {
+                        selectedPlanet = null;
+                        updateEditorUI(null);
+                    } else {
+                        selectedPlanet = planet;
+                        updateEditorUI(planet);
+                        bindEditorEvents(planet);
+                    }
+                    break;
+                }
+            }
+        }
     });
 
     window.addEventListener('mousedown', () => {
@@ -84,11 +103,11 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('mousemove', function (event) {
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
-        
+
         for (let planet of planets) {
             planet.highlighted = false;
         }
-        
+
         for (let planet of planets) {
             const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
