@@ -5,12 +5,13 @@ import { applyMutualGravity } from './utils.js';
 import Sun from './bodies/Sun.js';
 import Planet from './bodies/Planet.js';
 import FarStars from './stars.js';
-import { getDistance } from './utils.js';
 import { screenToWorld } from './camera.js';
+import Moon from './bodies/moon.js';
 
 export function init(canvas) {
   const distantStars = [];
   const planets = [];
+  const moons = [];
 
   // Create far stars
   for (let i = 0; i < 4000; i++) {
@@ -47,7 +48,30 @@ export function init(canvas) {
     planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
   }
 
-  return { sun, planets, distantStars };
+  //Create moons 
+  planets.forEach(planet => {
+    const moonMass = 2;
+    const moonRadius = 3;
+
+    const moonDistance = 30; // Distance from planet
+    const theta = Math.random() * 2 * Math.PI;
+
+    const moonPos = {
+      x: planet.position.x + moonDistance * Math.cos(theta),
+      y: planet.position.y + moonDistance * Math.sin(theta),
+    };
+
+    const orbitalSpeed = Math.sqrt(G * planet.mass / moonDistance);
+
+    const moonVelocity = {
+      x: planet.velocity.x - orbitalSpeed * Math.sin(theta),
+      y: planet.velocity.y + orbitalSpeed * Math.cos(theta),
+    };
+
+    moons.push(new Moon(moonMass, moonPos, moonVelocity, moonRadius, planet));
+  });
+
+  return { sun, planets, moons, distantStars };
 }
 
 
@@ -77,7 +101,7 @@ export function predictAllPaths(planets, sun, steps = 10000) {
 }
 
 
-export function animate({ content, canvas, camera, sun, planets, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
+export function animate({ content, canvas, camera, sun, planets, moons, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
   function loop() {
     requestAnimationFrame(loop);
 
@@ -127,7 +151,11 @@ export function animate({ content, canvas, camera, sun, planets, distantStars, m
       }
       planetA.update();
     }
-  }
 
+    // moons.forEach(moon => {
+    //   moon.update();
+    //   console.log(moon);
+    // });
+  }
   loop();
 }
