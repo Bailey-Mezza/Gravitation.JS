@@ -1,5 +1,4 @@
 import { canvas } from './canvas.js';
-import { G } from './constants.js';
 import { camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
 import { predictAllPaths } from './simulation.js';
@@ -104,6 +103,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
 
+        if (isPausedRef.value && lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width-(canvas.width / 5)) {
+            canvas.style.cursor = 'crosshair';
+        } else {
+            canvas.style.cursor = 'default';
+        }
+
         for (let planet of planets) {
             planet.highlighted = false;
         }
@@ -111,6 +116,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         for (let planet of planets) {
             const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
+                canvas.style.cursor = 'default';
                 planet.highlighted = true;
                 //console.log(planet.highlighted);
                 break;
@@ -140,22 +146,21 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             }
         }
 
-        if (!clickedOnPlanet) {
-            const planetMass = 1;
-            const planetRadius = 2;
-            const r = 75;
-            const theta = Math.random() * 2 * Math.PI;
-            const planetPos = {
-                x: lastMouseEvent.x,
-                y: lastMouseEvent.y
-            };
-
-            const orbitalSpeed = Math.sqrt(G * 10000 / r);
-            const planetVelocity = {
-                x: 0,
-                y: 0
-            };
-            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+        if (lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width-(canvas.width / 5)) {
+            if (!clickedOnPlanet) {
+                const planetMass = 10;
+                const planetRadius = 10;
+                const planetPos = {
+                    x: lastMouseEvent.x,
+                    y: lastMouseEvent.y
+                };
+                const planetVelocity = {
+                    x: 1,
+                    y: -1
+                };
+                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            }
         }
+
     });
 }

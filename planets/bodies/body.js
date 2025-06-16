@@ -1,5 +1,6 @@
 import { content } from '../canvas.js';
 import { G } from '../constants.js';
+import { applyMutualGravity } from '../utils.js';
 
 export default class Body {
   constructor(mass, position, velocity, radius) {
@@ -48,6 +49,10 @@ export default class Body {
         // this.velocity.x += bx;
         // this.velocity.x += by;
     }
+
+  //   gravitate(child) {
+  //   applyMutualGravity(this, child, G);
+  // }
 
   clone() {
     return new this.constructor(

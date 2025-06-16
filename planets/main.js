@@ -22,7 +22,11 @@ const isPausedRef = { value: isPaused };
 
 // Initialize and start simulation
 function start() {
-    ({ sun, planets, moons, distantStars } = init(canvas));
+    const initData = init(canvas);
+    sun = initData.sun;
+    planets = initData.planets;
+    moons = initData.moons;
+    distantStars = initData.distantStars;
 
     registerEvents(
         mouse,
