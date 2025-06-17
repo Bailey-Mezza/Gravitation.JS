@@ -1,3 +1,5 @@
+import { predictAllPaths } from './simulation.js';
+
 const editor = document.getElementById('planet-editor');
 const massInput = document.getElementById('mass-input');
 const velXInput = document.getElementById('velx-input');
@@ -17,9 +19,26 @@ export function updateEditorUI(planet) {
 }
 
 // Hook inputs to the selected planet
-export function bindEditorEvents(planet) {
-    massInput.oninput = () => planet.mass = parseFloat(massInput.value);
-    velXInput.oninput = () => planet.velocity.x = parseFloat(velXInput.value);
-    velYInput.oninput = () => planet.velocity.y = parseFloat(velYInput.value);
-    radiusInput.oninput = () => planet.radius = parseFloat(radiusInput.value);
+export function bindEditorEvents(planet, planets = [], sun = null) {
+    if (!planet || !planets.map) return;
+    massInput.oninput = () => {
+        planet.mass = parseFloat(massInput.value);
+        predictAllPaths(planets, sun);
+    };
+
+    velXInput.oninput = () => {
+        planet.velocity.x = parseFloat(velXInput.value);
+        predictAllPaths(planets, sun);
+    };
+
+    velYInput.oninput = () => {
+        planet.velocity.y = parseFloat(velYInput.value);
+        predictAllPaths(planets, sun);
+    };
+
+    radiusInput.oninput = () => {
+        planet.radius = parseFloat(radiusInput.value);
+        // Optional: only affects visuals, not physics
+        predictAllPaths(planets, sun);
+    };
 }

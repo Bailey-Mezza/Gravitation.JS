@@ -75,11 +75,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     } else {
                         selectedPlanet = planet;
                         updateEditorUI(planet);
-                        bindEditorEvents(planet);
+                        bindEditorEvents(planet, planets, sun);
                     }
                     break;
                 }
             }
+             predictAllPaths(planets, sun);
         }
     });
 
@@ -159,6 +160,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     y: -1
                 };
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+                predictAllPaths(planets, sun);
             }
         }
 

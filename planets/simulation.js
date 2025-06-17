@@ -72,7 +72,7 @@ export function init(canvas) {
   // });
 
   // return { sun, planets, moons, distantStars };
-  return { sun: null, planets: [], moons: [], distantStars };
+   return { sun: null, planets: [], moons: [], distantStars };
 }
 
 

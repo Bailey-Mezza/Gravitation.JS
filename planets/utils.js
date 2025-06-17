@@ -25,13 +25,16 @@ export function applyMutualGravity(parent, child, G) {
   if (r === 0) return;
 
   const force = G * parent.mass * child.mass / (r * r);
-  const ax = force * dx / r / child.mass;
-  const ay = force * dy / r / child.mass;
-  const bx = -force * dx / r / child.mass;
-  const by = -force * dy / r / child.mass;
 
-  child.velocity.x += ax;
-  child.velocity.y += ay;
-  parent.velocity.x += bx;
-  parent.velocity.y += by;
+  // Directional force vector components
+  const fx = force * dx / r;
+  const fy = force * dy / r;
+
+  // Acceleration = force / mass
+  child.velocity.x += fx / child.mass;
+  child.velocity.y += fy / child.mass;
+
+  parent.velocity.x -= fx / parent.mass;
+  parent.velocity.y -= fy / parent.mass;
 }
+
