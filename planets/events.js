@@ -1,11 +1,13 @@
 import { canvas } from './canvas.js';
+import { G } from './constants.js';
 import { camera } from './camera.js';
 import { getDistance, getWorldMousePosition } from './utils.js';
 import { predictAllPaths } from './simulation.js';
+import Sun from './bodies/Sun.js';
 import Planet from './bodies/Planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
-export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, sun) {
+export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
     let draggingPlanet = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -80,7 +82,40 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     break;
                 }
             }
-             predictAllPaths(planets, sun);
+            predictAllPaths(planets, sun);
+        }
+
+        if (event.code === 'KeyP' && isPausedRef.value) {
+            // Create sun
+            const sunMass = 10000;
+            const sunRadius = 50;
+            const sunPos = { x: canvas.width / 2, y: canvas.height / 2 };
+            const sunVelocity = { x: 0, y: 0 };
+            const sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
+            suns.push(sun);
+
+            // Create planets
+            for (let i = 0; i < 3; i++) {
+                const planetMass = 10;
+                const planetRadius = 10;
+                const rMin = sunRadius + 100;
+                const rMax = canvas.height / 2 - planetRadius;
+                const r = rMin + Math.random() * (rMax - rMin);
+                const theta = Math.random() * 2 * Math.PI;
+                const planetPos = {
+                    x: sunPos.x + r * Math.cos(theta),
+                    y: sunPos.y + r * Math.sin(theta),
+                };
+
+                const orbitalSpeed = Math.sqrt(G * sunMass / r);
+                const planetVelocity = {
+                    x: -orbitalSpeed * Math.sin(theta),
+                    y: orbitalSpeed * Math.cos(theta),
+                };
+
+                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            }
+            predictAllPaths(planets, sun);
         }
     });
 
@@ -104,7 +139,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
 
-        if (isPausedRef.value && lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width-(canvas.width / 5)) {
+        if (isPausedRef.value && lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width - (canvas.width / 5)) {
             canvas.style.cursor = 'crosshair';
         } else {
             canvas.style.cursor = 'default';
@@ -147,7 +182,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             }
         }
 
-        if (lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width-(canvas.width / 5)) {
+        if (lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width - (canvas.width / 5)) {
             if (!clickedOnPlanet) {
                 const planetMass = 10;
                 const planetRadius = 10;

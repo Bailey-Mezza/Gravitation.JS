@@ -9,7 +9,7 @@ import { init, animate } from './simulation.js';
 export let mouse = { x: innerWidth / 2, y: innerHeight / 2 };
 export let planets = [];
 export let moons = [];
-export let sun = null;
+export let suns = [];
 export let distantStars = [];
 export let scale = 1;
 export let isPaused = false;
@@ -23,7 +23,7 @@ const isPausedRef = { value: isPaused };
 // Initialize and start simulation
 function start() {
     const initData = init(canvas);
-    sun = initData.sun;
+    suns = initData.suns;
     planets = initData.planets;
     moons = initData.moons;
     distantStars = initData.distantStars;
@@ -35,12 +35,12 @@ function start() {
         isPausedRef,
         followTarget,
         camera,
-        sun
+        suns
     );
 
     animate({
         content, canvas, camera,
-        sun, planets, moons, distantStars,
+        suns, planets, moons, distantStars,
         mouse, scaleRef, isPausedRef,
         followTargetRef: followTarget
     });
