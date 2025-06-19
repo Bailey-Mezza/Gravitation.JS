@@ -77,12 +77,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     } else {
                         selectedPlanet = planet;
                         updateEditorUI(planet);
-                        bindEditorEvents(planet, planets, sun);
+                        bindEditorEvents(planet, planets, suns);
                     }
                     break;
                 }
             }
-            predictAllPaths(planets, sun);
+            predictAllPaths(planets, suns);
         }
 
         if (event.code === 'KeyP' && isPausedRef.value) {
@@ -115,7 +115,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
             }
-            predictAllPaths(planets, sun);
+            predictAllPaths(planets, suns);
         }
     });
 
@@ -162,7 +162,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         if (draggingPlanet && isPausedRef.value) {
             draggingPlanet.position.x = worldMouse.x - offsetX;
             draggingPlanet.position.y = worldMouse.y - offsetY;
-            predictAllPaths(planets, sun);
+            predictAllPaths(planets, suns);
         }
     });
 
@@ -195,7 +195,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     y: -1
                 };
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-                predictAllPaths(planets, sun);
+                predictAllPaths(planets, suns); 
             }
         }
 

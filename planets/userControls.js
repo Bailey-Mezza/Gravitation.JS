@@ -5,6 +5,7 @@ const massInput = document.getElementById('mass-input');
 const velXInput = document.getElementById('velx-input');
 const velYInput = document.getElementById('vely-input');
 const radiusInput = document.getElementById('radius-input');
+const colourInput = document.getElementById('colour-input')
 
 export function updateEditorUI(planet) {
     if (!planet) {
@@ -16,6 +17,7 @@ export function updateEditorUI(planet) {
     velXInput.value = planet.velocity.x;
     velYInput.value = planet.velocity.y;
     radiusInput.value = planet.radius;
+    colourInput.value = planet.color;
 }
 
 // Hook inputs to the selected planet
@@ -38,7 +40,11 @@ export function bindEditorEvents(planet, planets = [], sun = null) {
 
     radiusInput.oninput = () => {
         planet.radius = parseFloat(radiusInput.value);
-        // Optional: only affects visuals, not physics
+        predictAllPaths(planets, sun);
+    };
+
+    colourInput.oninput = () => {
+        planet.color = colourInput.value;
         predictAllPaths(planets, sun);
     };
 }
