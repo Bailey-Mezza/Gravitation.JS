@@ -24,6 +24,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         if (event.code === 'Space') {
             isPausedRef.value = !isPausedRef.value;
         }
+        predictAllPaths(planets, suns); 
+        updateEditorUI(null);
         if (!isPausedRef.value) return;
 
         const panSpeed = 20 / scaleRef.value;

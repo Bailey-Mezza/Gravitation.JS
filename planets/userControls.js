@@ -21,30 +21,30 @@ export function updateEditorUI(planet) {
 }
 
 // Hook inputs to the selected planet
-export function bindEditorEvents(planet, planets = [], sun = null) {
+export function bindEditorEvents(planet, planets = [], suns = []) {
     if (!planet || !planets.map) return;
     massInput.oninput = () => {
         planet.mass = parseFloat(massInput.value);
-        predictAllPaths(planets, sun);
+        predictAllPaths(planets, suns);
     };
 
     velXInput.oninput = () => {
         planet.velocity.x = parseFloat(velXInput.value);
-        predictAllPaths(planets, sun);
+        predictAllPaths(planets, suns);
     };
 
     velYInput.oninput = () => {
         planet.velocity.y = parseFloat(velYInput.value);
-        predictAllPaths(planets, sun);
+        predictAllPaths(planets, suns);
     };
 
     radiusInput.oninput = () => {
         planet.radius = parseFloat(radiusInput.value);
-        predictAllPaths(planets, sun);
+        predictAllPaths(planets, suns);
     };
 
     colourInput.oninput = () => {
         planet.color = colourInput.value;
-        predictAllPaths(planets, sun);
+        predictAllPaths(planets, suns);
     };
 }
