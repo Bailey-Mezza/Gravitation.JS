@@ -19,6 +19,8 @@ export default class Planet extends Body {
   }
 
   gravitate(child) {
+    console.log("GRAVITY");
+    
     applyMutualGravity(this, child, G);
   }
 

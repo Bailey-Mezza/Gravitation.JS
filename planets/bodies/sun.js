@@ -28,4 +28,19 @@ export default class Sun extends Body {
     content.shadowColor = 'transparent';
     content.shadowBlur = 0;
   }
+
+  drawPredictedPath() {
+    if (!this.predictedPath || this.predictedPath.length < 2) return;
+    content.beginPath();
+    content.moveTo(this.predictedPath[0].x, this.predictedPath[0].y);
+    for (let i = 1; i < this.predictedPath.length; i++) {
+      content.lineTo(this.predictedPath[i].x, this.predictedPath[i].y);
+    }
+    content.strokeStyle = this.color;
+    content.lineWidth = 1;
+    content.setLineDash([5, 5]);
+    content.stroke();
+    content.setLineDash([]);
+    content.closePath();
+  }
 }

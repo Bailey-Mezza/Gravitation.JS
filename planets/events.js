@@ -77,7 +77,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                         selectedPlanet = null;
                         updateEditorUI(null);
                     } else {
-                        selectedPlanet = planet;
+                        selectedPlanet = planet; 
                         updateEditorUI(planet);
                         bindEditorEvents(planet, planets, suns);
                     }

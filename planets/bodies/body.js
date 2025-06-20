@@ -49,7 +49,7 @@ export default class Body {
   //       // this.velocity.x += bx;
   //       // this.velocity.x += by;
   //   }
-
+ 
     gravitate(child) {
     applyMutualGravity(this, child, G);
   }

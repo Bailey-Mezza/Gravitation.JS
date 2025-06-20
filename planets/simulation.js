@@ -21,16 +21,14 @@ export function init(canvas) {
     distantStars.push(new FarStars(x, y, radius));
   }
 
-
   return { suns: [], planets: [], moons: [], distantStars };
 }
 
 
 export function predictAllPaths(planets, suns = [], steps = 10000) {
-  const predictedPlanets = planets.map(p => p.clone());
-  const predictedSuns = suns.map(s => s.clone());
-  const allBodies = [...predictedSuns, ...predictedPlanets];
-  const paths = predictedPlanets.map(() => []);
+  const allBodies = [...suns, ...planets].map(b => b.clone());
+  const paths = allBodies.map(() => []);
+  //console.log([paths]);
 
   for (let step = 0; step < steps; step++) {
     for (let i = 0; i < allBodies.length; i++) {
@@ -39,15 +37,18 @@ export function predictAllPaths(planets, suns = [], steps = 10000) {
       }
     }
 
-    predictedPlanets.forEach((planet, i) => {
-      planet.position.x += planet.velocity.x;
-      planet.position.y += planet.velocity.y;
-      paths[i].push({ x: planet.position.x, y: planet.position.y });
+    allBodies.forEach(body => {
+      body.position.x += body.velocity.x;
+      body.position.y += body.velocity.y;
+    });
+
+    allBodies.forEach((body, i) => {
+      paths[i].push({ x: body.position.x, y: body.position.y });
     });
   }
 
-  planets.forEach((planet, i) => {
-    planet.predictedPath = paths[i];
+  [...suns, ...planets].forEach((body, i) => {
+    body.predictedPath = paths[i];
   });
 }
 
@@ -75,38 +76,26 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
 
     distantStars.forEach(star => star.draw());
 
+    const allBodies = [...suns, ...planets];
+    
     if (isPaused) {
       if (suns.length && planets.length && !planets[0].predictedPath) {
         predictAllPaths(planets, suns);
       }
-
-      planets.forEach(planet => {
-        planet.drawPredictedPath();
-        planet.draw();
+      allBodies.forEach(body => {
+        body.drawPredictedPath();
+        body.draw();
       });
-      suns.forEach(sun => sun.draw());
       return;
     }
-    suns.forEach(sun => sun.update());
-
-    for (let i = 0; i < planets.length; i++) {
-      const planetA = planets[i];
-      planetA.highlighted = false;
-
-      suns.forEach(sun => sun.gravitate(planetA));
-
-      for (let j = i + 1; j < planets.length; j++) {
-        planetA.gravitate(planets[j]);
+    
+    for (let i = 0; i < allBodies.length; i++) {
+      for (let j = i + 1; j < allBodies.length; j++) {
+        applyMutualGravity(allBodies[i], allBodies[j], G);
       }
-
-      planetA.update();
     }
+    allBodies.forEach(body => body.update());
 
-
-    // moons.forEach(moon => {
-    //   moon.update();
-    //   console.log(moon);
-    // });
   }
   loop();
 }
