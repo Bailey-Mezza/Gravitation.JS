@@ -14,8 +14,8 @@ canvas {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: white;
-    color: black;
+    background-color: rgba(228, 228, 228, 0.15);
+    color: rgb(255, 255, 255);
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 12px;
@@ -28,20 +28,21 @@ canvas {
     width: 80px;
     margin-left: 6px;
     margin-bottom: 8px;
+    background-color: rgba(228, 228, 228, 0.15);
+    color: rgb(255, 255, 255);
 }
 
 #help-tips {
     position: absolute;
     top: 20px;
     left: 20px;
-    background-color: rgba(228, 228, 228, 0.);
+    background-color: rgba(228, 228, 228, 0.15);
     color: rgb(255, 255, 255);
     border: 1px solid rgba(228, 228, 228, 0.15);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 10;
 }
-
 
 .dropdown-container {
     position: relative;
@@ -58,14 +59,14 @@ canvas {
 }
 
 .dropdown-button:hover {
-    color: rgba(228, 228, 228, 0.9); /* more visible on hover */
+    color: rgba(228, 228, 228, 0.9);
     border: 1px solid rgba(228, 228, 228, 0.9);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    top: 100%; /* below the button */
+    top: 100%;
     left: 0;
     background-color: rgba(228, 228, 228, 0.15);
     min-width: 220px;
