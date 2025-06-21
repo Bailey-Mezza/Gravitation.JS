@@ -94,3 +94,25 @@ canvas {
     margin-top: 10px;
 }
 
+#pause-play-symbol {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 3rem;
+    color: white;
+    z-index: 10;
+    pointer-events: none; 
+}
+
+.symbol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.symbol.show {
+    opacity: 1;
+}

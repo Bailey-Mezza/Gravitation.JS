@@ -7,6 +7,9 @@ import Sun from './bodies/Sun.js';
 import Planet from './bodies/Planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
+const pauseSymbol = document.getElementById('pause-symbol');
+const playSymbol = document.getElementById('play-symbol');
+
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
     let draggingPlanet = null;
     let offsetX = 0;
@@ -23,6 +26,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
             isPausedRef.value = !isPausedRef.value;
+            showSymbol(isPausedRef.value);
             updateEditorUI(null);
         }
         predictAllPaths(planets, suns); 
@@ -227,4 +231,19 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
     });
+}
+
+function showSymbol(isPaused) {
+    // Hide both
+    pauseSymbol.classList.remove('show');
+    playSymbol.classList.remove('show');
+
+    // Show appropriate one
+    const symbolToShow = isPaused ? pauseSymbol : playSymbol;
+    symbolToShow.classList.add('show');
+
+    // Hide after 2 seconds
+    setTimeout(() => {
+        symbolToShow.classList.remove('show');
+    }, 2000);
 }
