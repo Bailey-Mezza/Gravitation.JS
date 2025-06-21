@@ -119,6 +119,31 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             }
             predictAllPaths(planets, suns);
         }
+
+        if (event.code === 'KeyT' && isPausedRef.value) {
+            // Three Body Problem
+            for (let i = 0; i < 3; i++) {
+                const planetMass = 10;
+                const planetRadius = 10;
+                const rMin = sunRadius + 100;
+                const rMax = canvas.height / 2 - planetRadius;
+                const r = rMin + Math.random() * (rMax - rMin);
+                const theta = Math.random() * 2 * Math.PI;
+                const planetPos = {
+                    x: sunPos.x + r * Math.cos(theta),
+                    y: sunPos.y + r * Math.sin(theta),
+                };
+
+                const orbitalSpeed = Math.sqrt(G * sunMass / r);
+                const planetVelocity = {
+                    x: -orbitalSpeed * Math.sin(theta),
+                    y: orbitalSpeed * Math.cos(theta),
+                };
+
+                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            }
+            predictAllPaths(planets, suns);
+        }
     });
 
     window.addEventListener('mousedown', () => {

@@ -20,7 +20,7 @@ canvas {
     border-radius: 8px;
     padding: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    z-index: 10; /* Higher than canvas */
+    z-index: 10;
     display: none;
 }
 
@@ -29,3 +29,67 @@ canvas {
     margin-left: 6px;
     margin-bottom: 8px;
 }
+
+#help-tips {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(228, 228, 228, 0.);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgba(228, 228, 228, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-button {
+    background-color: rgba(228, 228, 228, 0.15);
+    border: 1px solid rgba(228, 228, 228, 0.15);
+    color: rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-button:hover {
+    color: rgba(228, 228, 228, 0.9); /* more visible on hover */
+    border: 1px solid rgba(228, 228, 228, 0.9);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* below the button */
+    left: 0;
+    background-color: rgba(228, 228, 228, 0.15);
+    min-width: 220px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 1px solid rgba(228, 228, 228, 0.15);
+    border-radius: 6px;
+    padding: 10px;
+    z-index: 100;
+}
+
+.dropdown-container:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content hr {
+    margin: 10px 0;
+    border: 0;
+    border-top: 1px solid rgba(228, 228, 228, 0.15);
+}
+
+.dropdown-content a {
+    color: #007BFF;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+}
+

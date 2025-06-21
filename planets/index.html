@@ -6,28 +6,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gravity Testing</title>
     <link rel="stylesheet" href="ui.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"> -->
 </head>
 
 <body>
-    <div id="planet-editor" style="position: absolute; top: 20px; right: 20px; background: #fff; padding: 12px; border: 1px solid #ccc; border-radius: 8px; display: none;">
-    <div>
-        <label>Mass: <input id="mass-input" type="number" step="0.01"></label>
+    <div id="help-tips" class="dropdown-container">
+        <button class="dropdown-button">Controls ▼</button>
+        <div class="dropdown-content">
+            <div>
+                <p><strong>Space</strong> pauses or unpauses the simulation.</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>Arrow Keys / W A S D</strong> pan the camera (when paused).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>1</strong> zooms in (increases scale).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>2</strong> zooms out (decreases scale).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>O</strong> toggles follow mode for a planet under the cursor (when paused).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>I</strong> opens the planet editor for a planet under the cursor (when paused).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>P</strong> opens the preset menu (when paused).</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>Left Click</strong> in the canvas (when paused) creates a new planet unless you click an
+                    existing one.</p>
+            </div>
+            <hr />
+            <div>
+                <p><strong>Click and Drag</strong> a planet to move it (when paused).</p>
+            </div>
+        </div>
     </div>
-    <div>
-        <label>Velocity X: <input id="velx-input" type="number" step="0.1"></label>
+
+    <div id="planet-editor">
+        <div>
+            <label>Mass: <input id="mass-input" type="number" step="0.01"></label>
+        </div>
+        <div>
+            <label>Velocity X: <input id="velx-input" type="number" step="0.1"></label>
+        </div>
+        <div>
+            <label>Velocity Y: <input id="vely-input" type="number" step="0.1"></label>
+        </div>
+        <div>
+            <label>Radius: <input id="radius-input" type="number" step="0.1"></label>
+        </div>
+        <div>
+            <label>Colour: <input id="colour-input" type="color"></label>
+        </div>
     </div>
-    <div>
-        <label>Velocity Y: <input id="vely-input" type="number" step="0.1"></label>
-    </div>
-    <div>
-        <label>Radius: <input id="radius-input" type="number" step="0.1"></label>
-    </div>
-    <div>
-        <label>Colour: <input id="colour-input" type="color"></label>
-    </div>
-</div>
     <canvas></canvas>
-    
+
 </body>
 <script type="module" src="main.js"></script>
 
