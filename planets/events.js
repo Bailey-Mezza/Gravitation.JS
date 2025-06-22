@@ -16,6 +16,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let offsetY = 0;
     let didDrag = false;
     let lastMouseEvent = null;
+    let inputMode = 'default';
 
 
     window.addEventListener('resize', () => {
@@ -29,7 +30,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             showSymbol(isPausedRef.value);
             updateEditorUI(null);
         }
-        predictAllPaths(planets, suns); 
+        predictAllPaths(planets, suns);
         if (!isPausedRef.value) return;
 
         const panSpeed = 20 / scaleRef.value;
@@ -69,6 +70,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     }
                     break;
                 }
+
             }
         }
 
@@ -81,7 +83,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                         selectedPlanet = null;
                         updateEditorUI(null);
                     } else {
-                        selectedPlanet = planet; 
+                        selectedPlanet = planet;
                         updateEditorUI(planet);
                         bindEditorEvents(planet, planets, suns);
                     }
@@ -170,9 +172,13 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
 
-        if (isPausedRef.value && lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width - (canvas.width / 5)) {
+        const isHoveringCanvas = event.target === canvas;
+
+        if (isPausedRef.value && isHoveringCanvas) {
+            inputMode = 'add-planet';
             canvas.style.cursor = 'crosshair';
         } else {
+            inputMode = 'default';
             canvas.style.cursor = 'default';
         }
 
@@ -183,9 +189,9 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         for (let planet of planets) {
             const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
             if (dist < planet.radius) {
+                inputMode = 'default';
                 canvas.style.cursor = 'default';
                 planet.highlighted = true;
-                //console.log(planet.highlighted);
                 break;
             }
         }
@@ -202,33 +208,20 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     });
 
     window.addEventListener('click', function () {
-        if (didDrag || !isPausedRef.value) return;
+        if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
-        let clickedOnPlanet = false;
-        for (let planet of planets) {
-            const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
-            if (dist < planet.radius) {
-                clickedOnPlanet = true;
-                break;
-            }
-        }
-
-        if (lastMouseEvent.x > (canvas.width / 5) && lastMouseEvent.x < canvas.width - (canvas.width / 5)) {
-            if (!clickedOnPlanet) {
-                const planetMass = 10;
-                const planetRadius = 10;
-                const planetPos = {
-                    x: lastMouseEvent.x,
-                    y: lastMouseEvent.y
-                };
-                const planetVelocity = {
-                    x: 1,
-                    y: -1
-                };
-                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-                predictAllPaths(planets, suns); 
-            }
-        }
+        const planetMass = 1;
+        const planetRadius = 10;
+        const planetPos = {
+            x: lastMouseEvent.x,
+            y: lastMouseEvent.y
+        };
+        const planetVelocity = {
+            x: 1,
+            y: -1
+        };
+        planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+        predictAllPaths(planets, suns);
 
     });
 }
