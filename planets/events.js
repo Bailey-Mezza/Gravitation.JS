@@ -31,6 +31,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             updateEditorUI(null);
         }
         predictAllPaths(planets, suns);
+        //console.log(event);
+
         if (!isPausedRef.value) return;
 
         const panSpeed = 20 / scaleRef.value;
@@ -53,7 +55,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 scaleRef.value = Math.max(scaleRef.value - 0.05, 0.1); break;
         }
 
-        if (event.code === 'KeyO' && isPausedRef.value) {
+        if (event.code === 'KeyO') {
             for (let planet of planets) {
                 const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
                 // console.log('Mouse world position:', worldMouse);
@@ -74,7 +76,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             }
         }
 
-        if (event.code === 'KeyI' && isPausedRef.value) {
+        if (event.code === 'KeyI') {
             for (let planet of planets) {
                 const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
                 let selectedPlanet = null;
@@ -93,7 +95,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             predictAllPaths(planets, suns);
         }
 
-        if (event.code === 'KeyP' && isPausedRef.value) {
+        if (event.code === 'KeyP') {
             // Create sun
             const sunMass = 10000;
             const sunRadius = 50;
@@ -126,7 +128,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             predictAllPaths(planets, suns);
         }
 
-        if (event.code === 'KeyT' && isPausedRef.value) {
+        if (event.code === 'KeyT') {
             // Three Body Problem
             for (let i = 0; i < 3; i++) {
                 const planetMass = 10;
@@ -149,6 +151,17 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
             }
             predictAllPaths(planets, suns);
+        }
+
+        if (event.code === 'Backspace' || event.code === 'Delete') {
+            for (let i = planets.length - 1; i >= 0; i--) {
+                const planetToRemove = planets[i];
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planetToRemove.position.x, planetToRemove.position.y);
+                if (dist < planetToRemove.radius) {
+                    planets.splice(i, 1);
+                    break; 
+                }
+            }
         }
     });
 
