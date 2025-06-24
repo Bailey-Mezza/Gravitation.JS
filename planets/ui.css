@@ -116,3 +116,45 @@ canvas {
 .symbol.show {
     opacity: 1;
 }
+
+#diagnostic {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 100;
+}
+
+.popup-button {
+  background-color: rgba(50, 50, 50, 0.7);
+  color: white;
+  margin: 0px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.2s ease;
+}
+
+.popup-button:hover {
+  background-color: rgba(70, 70, 70, 0.9);
+}
+
+
+
+.diagnos-info {
+  display: none;
+  /* margin-top: 10px; */
+  background-color: rgba(228, 228, 228, 0.15);
+  border: 1px solid rgba(228, 228, 228, 0.15);
+  border-radius: 6px;
+  padding: 10px;
+  min-width: 220px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.popup-button:hover .diagnos-Info {
+    display: block;
+}

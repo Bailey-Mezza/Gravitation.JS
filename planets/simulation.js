@@ -2,16 +2,10 @@ import { G } from './constants.js';
 import { randomIntFromRange } from './utils.js';
 import { applyMutualGravity } from './utils.js';
 
-import Sun from './bodies/Sun.js';
-import Planet from './bodies/Planet.js';
 import FarStars from './stars.js';
-import { screenToWorld } from './camera.js';
-import Moon from './bodies/moon.js';
 
 export function init(canvas) {
   const distantStars = [];
-  const planets = [];
-  const moons = [];
 
   // Create far stars
   for (let i = 0; i < 4000; i++) {
@@ -52,10 +46,23 @@ export function predictAllPaths(planets, suns = [], steps = 10000) {
   });
 }
 
+let lastFrameTime = performance.now();
+let fps = 0;
+let fpsUpdate = 0;
 
 export function animate({ content, canvas, camera, suns, planets, moons, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
   function loop() {
     requestAnimationFrame(loop);
+    
+    const now = performance.now();
+    const delta = now - lastFrameTime;
+    fps = 1000 / delta;
+    lastFrameTime = now;
+
+    // fpsUpdate++;
+    // if(fpsUpdate % 5){
+    //   console.log(`${fps.toFixed(1)}`);
+    // }
 
     const scale = scaleRef.value;
     const isPaused = isPausedRef.value;
@@ -77,7 +84,7 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
     distantStars.forEach(star => star.draw());
 
     const allBodies = [...suns, ...planets];
-    
+
     if (isPaused) {
       if (suns.length && planets.length && !planets[0].predictedPath) {
         predictAllPaths(planets, suns);
@@ -88,7 +95,7 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
       });
       return;
     }
-    
+
     for (let i = 0; i < allBodies.length; i++) {
       for (let j = i + 1; j < allBodies.length; j++) {
         applyMutualGravity(allBodies[i], allBodies[j], G);
@@ -96,6 +103,8 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
     }
     allBodies.forEach(body => body.update());
 
+    
+    
   }
   loop();
 }
