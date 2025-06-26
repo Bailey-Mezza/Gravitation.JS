@@ -9,6 +9,8 @@ import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
 const pauseSymbol = document.getElementById('pause-symbol');
 const playSymbol = document.getElementById('play-symbol');
+const toggleButton = document.querySelector('.popup-button');
+const infoBox = document.querySelector('.diagnos-info');
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
     let draggingPlanet = null;
@@ -17,6 +19,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let didDrag = false;
     let lastMouseEvent = null;
     let inputMode = 'default';
+    let diagnosticsOpen = false;
 
 
     window.addEventListener('resize', () => {
@@ -159,7 +162,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planetToRemove.position.x, planetToRemove.position.y);
                 if (dist < planetToRemove.radius) {
                     planets.splice(i, 1);
-                    break; 
+                    break;
                 }
             }
         }
@@ -184,6 +187,15 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('mousemove', function (event) {
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
+
+        const threshold = 60; // pixels from bottom
+        const isNearBottom = window.innerHeight - event.clientY < threshold;
+        const popupButton = document.querySelector('.popup-button');
+        if (diagnosticsOpen || isNearBottom) {
+            popupButton.style.opacity = '1';
+        } else {
+            popupButton.style.opacity = '0.05';
+        }
 
         const isHoveringCanvas = event.target === canvas;
 
@@ -235,7 +247,14 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         };
         planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
         predictAllPaths(planets, suns);
+    });
 
+    toggleButton.addEventListener('click', function () {
+        diagnosticsOpen = !diagnosticsOpen;
+        const isVisible = infoBox.style.display === 'block';
+        infoBox.style.display = isVisible ? 'none' : 'block';
+        toggleButton.querySelector('p').textContent = isVisible ? '↑' : '↓';
+        popupButton.style.opacity = '1'
     });
 }
 

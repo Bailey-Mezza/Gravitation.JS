@@ -124,7 +124,7 @@ canvas {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  z-index: 100;
+  z-index: 10;
 }
 
 .popup-button {
@@ -136,6 +136,13 @@ canvas {
   font-size: 14px;
   transition: background-color 0.2s ease;
   user-select: none;
+  opacity: 0.05;
+  transition: opacity 0.3s ease, background-color 0.2s ease;
+  z-index: 10; 
+}
+
+.popup-button:hover {
+  opacity: 1;
 }
 
 .diagnos-info {
@@ -149,6 +156,3 @@ canvas {
   margin-top: 4px;
 }
 
-#diagnostic:active .diagnos-info {
-  display: block;
-}
