@@ -20,6 +20,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let lastMouseEvent = null;
     let inputMode = 'default';
     let diagnosticsOpen = false;
+    let sunMode = false;
 
 
     window.addEventListener('resize', () => {
@@ -166,6 +167,10 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 }
             }
         }
+
+        if (event.code === 'KeyL') {
+            sunMode = !sunMode;
+        }
     });
 
     window.addEventListener('mousedown', () => {
@@ -235,18 +240,32 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('click', function () {
         if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
-        const planetMass = 1;
-        const planetRadius = 10;
-        const planetPos = {
-            x: lastMouseEvent.x,
-            y: lastMouseEvent.y
-        };
-        const planetVelocity = {
-            x: 1,
-            y: -1
-        };
-        planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-        predictAllPaths(planets, suns);
+        if (!sunMode) {
+            const planetMass = 1;
+            const planetRadius = 10;
+            const planetPos = {
+                x: lastMouseEvent.x,
+                y: lastMouseEvent.y
+            };
+            const planetVelocity = {
+                x: 1,
+                y: -1
+            };
+            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            predictAllPaths(planets, suns);
+        } else {
+            const sunMass = 10000;
+            const sunRadius = 50;
+            const sunPos = {
+                x: lastMouseEvent.x,
+                y: lastMouseEvent.y
+            }; 
+            const sunVelocity = { x: 0, y: 0 };
+            const sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
+            suns.push(sun);
+            predictAllPaths(planets, suns);
+        }
+
     });
 
     toggleButton.addEventListener('click', function () {
