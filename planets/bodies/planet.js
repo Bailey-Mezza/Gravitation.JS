@@ -34,7 +34,7 @@ export default class Planet extends Body {
     content.strokeStyle = this.color;
     content.lineWidth = 1;
     content.setLineDash([5, 5]);
-    content.stroke();
+    content.stroke(); 
     content.setLineDash([]);
     content.closePath();
   }

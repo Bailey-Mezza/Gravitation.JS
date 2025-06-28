@@ -77,7 +77,7 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
         predictAllPaths(planets, suns);
       }
       allBodies.forEach(body => {
-        body.drawPredictedPath();
+        body.drawPredictedPath(followTargetRef.value, canvas);
         body.draw();
       });
       return;
