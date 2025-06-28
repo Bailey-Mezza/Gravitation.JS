@@ -84,7 +84,9 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             for (let planet of planets) {
                 const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
                 let selectedPlanet = null;
-                if (dist < planet.radius) {
+                if (dist < planet.radius) {  
+                    console.log("Planet Mass : " + planet.mass + "\n" + "Planet Position X : " + planet.position.x + " Y: " + planet.position.y + "\n" + "Planet Velocity X : " + planet.velocity.x +  " Y: "  + planet.velocity.y + "\n" + "Planet Radius : " + planet.radius);
+                    
                     if (selectedPlanet === planet) {
                         selectedPlanet = null;
                         updateEditorUI(null);
