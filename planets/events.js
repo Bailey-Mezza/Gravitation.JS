@@ -275,7 +275,6 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         const isVisible = infoBox.style.display === 'block';
         infoBox.style.display = isVisible ? 'none' : 'block';
         toggleButton.querySelector('p').textContent = isVisible ? '↑' : '↓';
-        popupButton.style.opacity = '1'
     });
 }
 

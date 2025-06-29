@@ -46,6 +46,11 @@ export function predictAllPaths(planets, suns = [], steps = 10000) {
   });
 }
 
+let lastFrameTime, lastUpdateTime = performance.now();
+let fps = 0;
+const fpsArray = [];
+const maxArraySize = 30;
+let fpsWarning = false;
 
 export function animate({ content, canvas, camera, suns, planets, moons, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
   function loop() {
@@ -71,7 +76,40 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
     distantStars.forEach(star => star.draw());
 
     const allBodies = [...suns, ...planets];
-    
+
+    //FPS CALCULATION DIAGNOSTICS
+    const now = performance.now();
+    const delta = now - lastFrameTime;
+    fps = 1000 / delta;
+    lastFrameTime = now;
+
+    fpsArray.push(fps);
+    if (fpsArray.length > maxArraySize) {
+        fpsArray.shift();
+    }
+
+     if (now - lastUpdateTime > 500) {
+        const fpsData = document.getElementById('fps');
+        if (fpsData) {
+            const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
+            if (avgFps < 30) {
+              fpsWarning = true;
+            }
+            fpsData.textContent = `FPS: ${Math.round(avgFps)}`;
+        }
+        lastUpdateTime = now; 
+    }
+
+    if (fpsWarning) {
+      
+    }
+
+    //TOTAL BODY DIAGNOSTICS
+    const totalBodiesData = document.getElementById('total-bodies');
+    if (totalBodiesData) {
+      totalBodiesData.textContent = `Total Bodies: ${allBodies.length}`;
+    }
+
     if (isPaused) {
       if (suns.length && planets.length && !planets[0].predictedPath) {
         predictAllPaths(planets, suns);
@@ -82,7 +120,7 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
       });
       return;
     }
-    
+
     for (let i = 0; i < allBodies.length; i++) {
       for (let j = i + 1; j < allBodies.length; j++) {
         applyMutualGravity(allBodies[i], allBodies[j], G);
