@@ -84,9 +84,9 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             for (let planet of planets) {
                 const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
                 let selectedPlanet = null;
-                if (dist < planet.radius) {  
-                    console.log("Planet Mass : " + planet.mass + "\n" + "Planet Position X : " + planet.position.x + " Y: " + planet.position.y + "\n" + "Planet Velocity X : " + planet.velocity.x +  " Y: "  + planet.velocity.y + "\n" + "Planet Radius : " + planet.radius);
-                    
+                if (dist < planet.radius) {
+                    console.log("Planet Mass : " + planet.mass + "\n" + "Planet Position X : " + planet.position.x + " Y: " + planet.position.y + "\n" + "Planet Velocity X : " + planet.velocity.x + " Y: " + planet.velocity.y + "\n" + "Planet Radius : " + planet.radius);
+
                     if (selectedPlanet === planet) {
                         selectedPlanet = null;
                         updateEditorUI(null);
@@ -136,22 +136,36 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
         if (event.code === 'KeyT') {
             // Three Body Problem
+            const threeBody = {
+                masses: [1000, 1000, 1000],
+                positions: [
+                    { x: -0.97000436, y: 0.24308753 },  // Body A
+                    { x: 0.97000436, y: -0.24308753 },  // Body B
+                    { x: 0.0, y: 0.0 }   // Body C
+                ],
+                velocities: [
+                    { x: 0.4662036850, y: 0.4323657300 },   // Body A
+                    { x: 0.4662036850, y: 0.4323657300 },   // Body B
+                    { x: -0.93240737, y: -0.86473146 }    // Body C
+                ]
+            };
             for (let i = 0; i < 3; i++) {
-                const planetMass = 10;
-                const planetRadius = 10;
-                const rMin = sunRadius + 100;
-                const rMax = canvas.height / 2 - planetRadius;
-                const r = rMin + Math.random() * (rMax - rMin);
-                const theta = Math.random() * 2 * Math.PI;
+                const planetMass = threeBody.masses[i];
+                const planetRadius = 20;
+
+                // Scale and translate to fit canvas if needed
+                const scale = 150;  // optional, to make the figure-8 visible
+                const offsetX = canvas.width / 2;
+                const offsetY = canvas.height / 2;
+
                 const planetPos = {
-                    x: sunPos.x + r * Math.cos(theta),
-                    y: sunPos.y + r * Math.sin(theta),
+                    x: offsetX + threeBody.positions[i].x * scale,
+                    y: offsetY + threeBody.positions[i].y * scale
                 };
 
-                const orbitalSpeed = Math.sqrt(G * sunMass / r);
                 const planetVelocity = {
-                    x: -orbitalSpeed * Math.sin(theta),
-                    y: orbitalSpeed * Math.cos(theta),
+                    x: threeBody.velocities[i].x * 1.211,
+                    y: threeBody.velocities[i].y * 1.211
                 };
 
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
@@ -261,7 +275,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const sunPos = {
                 x: lastMouseEvent.x,
                 y: lastMouseEvent.y
-            }; 
+            };
             const sunVelocity = { x: 0, y: 0 };
             const sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
             suns.push(sun);

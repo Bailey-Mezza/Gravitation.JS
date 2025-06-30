@@ -50,7 +50,6 @@ let lastFrameTime, lastUpdateTime = performance.now();
 let fps = 0;
 const fpsArray = [];
 const maxArraySize = 30;
-let fpsWarning = false;
 
 export function animate({ content, canvas, camera, suns, planets, moons, distantStars, mouse, scaleRef, isPausedRef, followTargetRef }) {
   function loop() {
@@ -85,23 +84,25 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
 
     fpsArray.push(fps);
     if (fpsArray.length > maxArraySize) {
-        fpsArray.shift();
+      fpsArray.shift();
     }
 
-     if (now - lastUpdateTime > 500) {
-        const fpsData = document.getElementById('fps');
-        if (fpsData) {
-            const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
-            if (avgFps < 30) {
-              fpsWarning = true;
+    if (now - lastUpdateTime > 500) {
+      const fpsData = document.getElementById('fps');
+      if (fpsData) {
+        const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
+        fpsData.textContent = `FPS: ${Math.round(avgFps)}`;
+
+        const fpsWarning = document.getElementById('fps-warning');
+        if (fpsWarning) {
+          if (avgFps < 30) {
+                fpsWarning.style.display = 'block';
+            } else {
+                fpsWarning.style.display = 'none';
             }
-            fpsData.textContent = `FPS: ${Math.round(avgFps)}`;
         }
-        lastUpdateTime = now; 
-    }
-
-    if (fpsWarning) {
-      
+      }
+      lastUpdateTime = now;
     }
 
     //TOTAL BODY DIAGNOSTICS
