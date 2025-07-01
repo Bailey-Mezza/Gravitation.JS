@@ -87,13 +87,9 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
       fpsArray.shift();
     }
 
-    if (now - lastUpdateTime > 500) {
-      const fpsData = document.getElementById('fps');
-      if (fpsData) {
-        const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
-        fpsData.textContent = `FPS: ${Math.round(avgFps)}`;
+    const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
 
-        const fpsWarning = document.getElementById('fps-warning');
+    const fpsWarning = document.getElementById('fps-warning');
         if (fpsWarning) {
           if (avgFps < 30) {
                 fpsWarning.style.display = 'block';
@@ -101,6 +97,11 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
                 fpsWarning.style.display = 'none';
             }
         }
+
+    if (now - lastUpdateTime > 500) {
+      const fpsData = document.getElementById('fps');
+      if (fpsData) {
+        fpsData.textContent = `FPS: ${Math.round(avgFps)}`;
       }
       lastUpdateTime = now;
     }

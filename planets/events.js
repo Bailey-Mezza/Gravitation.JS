@@ -256,6 +256,11 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('click', function () {
         if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
+        const addBodyMenu = document.getElementById('addBody');
+        if (addBodyMenu) {
+            addBodyMenu.style.display = 'block';
+        }
+
         if (!sunMode) {
             const planetMass = 1;
             const planetRadius = 10;

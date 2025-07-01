@@ -156,17 +156,46 @@ canvas {
   margin-top: 4px;
 }
 
+.warning {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
 #fps-warning {
     display: none;
     position: absolute;
-    top: 50%;
-    left: 25%;
     background-color: rgba(141, 0, 0, 0.3);
     color: white;
     font-weight: bold;
     border: 1px solid #630000;
     border-radius: 8px;
     padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+#fps-warning h2{ 
+    text-align: center;
+    color: red;
+}
+
+#fps-warning button{ 
+    text-align: center;
+    color: white;
+    background-color: rgba(20, 20, 20, 0.7);
+}
+
+#addBody {
+    display: none;
+    position: absolute;
+    background-color: rgba(141, 0, 0, 0.3);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 1px solid rgba(228, 228, 228, 0.15);
+    border-radius: 6px;
+    padding: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 10;
 }

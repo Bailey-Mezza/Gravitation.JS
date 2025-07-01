@@ -79,9 +79,12 @@
         </div>
     </div>
 
-    <div id="fps-warning">
-        <p>Adding more bodies to this system will cause lag to increase. Do you want to continue?</p>
-        <button onclick="document.getElementById('fps-warning').style.display='none'">CLOSE</button>
+    <div class="warning">
+        <div id="fps-warning">
+            <h2>WARNING</h2>
+            <p>Lag is high right now, consider removing some bodies.</p>
+            <button onclick="document.getElementById('fps-warning').style.display='none'">CLOSE</button>
+        </div>
     </div>
 
     <div id="diagnostic">
@@ -95,7 +98,13 @@
     </div>
     <canvas></canvas>
 
-    
+    <div id="addBody">
+        <p>Sun</p>
+        <br>
+        <p>Planet</p>
+    </div>
+
+
 
 </body>
 
