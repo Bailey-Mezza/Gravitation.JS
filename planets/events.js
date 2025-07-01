@@ -11,6 +11,7 @@ const pauseSymbol = document.getElementById('pause-symbol');
 const playSymbol = document.getElementById('play-symbol');
 const toggleButton = document.querySelector('.popup-button');
 const infoBox = document.querySelector('.diagnos-info');
+const addBodyMenu = document.getElementById('addBody');
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
     let draggingPlanet = null;
@@ -32,6 +33,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             isPausedRef.value = !isPausedRef.value;
             showSymbol(isPausedRef.value);
             updateEditorUI(null);
+            addBodyMenu.style.display = 'none';
         }
         predictAllPaths(planets, suns);
         //console.log(event);
@@ -202,7 +204,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     window.addEventListener('mousemove', function (event) {
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
-        lastMouseEvent = worldMouse;
+        lastMouseEvent = worldMouse; 
 
         const threshold = 60; // pixels from bottom
         const isNearBottom = window.innerHeight - event.clientY < threshold;
@@ -248,7 +250,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         draggingPlanet = null;
     });
 
-    window.addEventListener('click', function () {
+    window.addEventListener('click', function (event) {
         if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
         position = {
@@ -256,10 +258,13 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 y: lastMouseEvent.y
             };
 
-        const addBodyMenu = document.getElementById('addBody');
+            const rect = canvas.getBoundingClientRect();
+            const screenX = event.clientX - rect.left;
+            const screenY = event.clientY - rect.top;
+
         if (addBodyMenu) {
-            addBodyMenu.style.left = `${position.x}px`;
-            addBodyMenu.style.top = `${position.y}px`;
+            addBodyMenu.style.left = `${screenX}px`;
+            addBodyMenu.style.top = `${screenY}px`;
             addBodyMenu.style.display = 'block';
         }
     });
@@ -276,6 +281,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 
     addSunOption.addEventListener('click', function () {
+        if (!isPausedRef.value) return;
         const sunMass = 10000;
         const sunRadius = 50;
         const sunPos = { x: position.x, y: position.y };
@@ -286,6 +292,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     });
 
     addPlanetOption.addEventListener('click', function () {
+        if (!isPausedRef.value) return;
         const planetMass = 1;
         const planetRadius = 10;
         const planetPos = { x: position.x, y: position.y };

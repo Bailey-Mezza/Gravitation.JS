@@ -189,13 +189,27 @@ canvas {
 #addBody {
     display: none;
     position: absolute;
-    background-color: rgba(20, 20, 20, 0.15);
+    background-color: rgba(30, 30, 30, 0.3);  /* darker, more opaque */
     color: white;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    border: 1px solid rgba(228, 228, 228, 0.15);
-    border-radius: 6px;
-    padding: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
     z-index: 10;
+    min-width: 120px;
+    user-select: none;
 }
+
+
+#addBody p {
+    margin: 0;
+    padding: 6px 0;
+}
+
+#addBody p:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
