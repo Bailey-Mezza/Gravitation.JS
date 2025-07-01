@@ -20,8 +20,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let lastMouseEvent = null;
     let inputMode = 'default';
     let diagnosticsOpen = false;
-    let sunMode = false;
-
+    let position = { };
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -183,10 +182,6 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                 }
             }
         }
-
-        if (event.code === 'KeyL') {
-            sunMode = !sunMode;
-        }
     });
 
     window.addEventListener('mousedown', () => {
@@ -256,37 +251,17 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     window.addEventListener('click', function () {
         if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
+        position = {
+                x: lastMouseEvent.x,
+                y: lastMouseEvent.y
+            };
+
         const addBodyMenu = document.getElementById('addBody');
         if (addBodyMenu) {
+            addBodyMenu.style.left = `${position.x}px`;
+            addBodyMenu.style.top = `${position.y}px`;
             addBodyMenu.style.display = 'block';
         }
-
-        if (!sunMode) {
-            const planetMass = 1;
-            const planetRadius = 10;
-            const planetPos = {
-                x: lastMouseEvent.x,
-                y: lastMouseEvent.y
-            };
-            const planetVelocity = {
-                x: 1,
-                y: -1
-            };
-            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            predictAllPaths(planets, suns);
-        } else {
-            const sunMass = 10000;
-            const sunRadius = 50;
-            const sunPos = {
-                x: lastMouseEvent.x,
-                y: lastMouseEvent.y
-            };
-            const sunVelocity = { x: 0, y: 0 };
-            const sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
-            suns.push(sun);
-            predictAllPaths(planets, suns);
-        }
-
     });
 
     toggleButton.addEventListener('click', function () {
@@ -295,7 +270,39 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         infoBox.style.display = isVisible ? 'none' : 'block';
         toggleButton.querySelector('p').textContent = isVisible ? '↑' : '↓';
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
+    const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
+
+    addSunOption.addEventListener('click', function () {
+        const sunMass = 10000;
+        const sunRadius = 50;
+        const sunPos = { x: position.x, y: position.y };
+        const sunVelocity = { x: 0, y: 0 };
+        suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
+        predictAllPaths(planets, suns);
+        hideMenu();
+    });
+
+    addPlanetOption.addEventListener('click', function () {
+        const planetMass = 1;
+        const planetRadius = 10;
+        const planetPos = { x: position.x, y: position.y };
+        const planetVelocity = { x: 1, y: -1 };
+        planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+        predictAllPaths(planets, suns);
+        hideMenu();
+    });
+
+    function hideMenu() {
+        const menu = document.getElementById('addBody');
+        if (menu) menu.style.display = 'none';
+    }
+});
 }
+
+
 
 function showSymbol(isPaused) {
     // Hide both
