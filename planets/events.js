@@ -21,7 +21,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let lastMouseEvent = null;
     let inputMode = 'default';
     let diagnosticsOpen = false;
-    let position = { };
+    let position = {};
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -204,7 +204,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     window.addEventListener('mousemove', function (event) {
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
-        lastMouseEvent = worldMouse; 
+        lastMouseEvent = worldMouse;
 
         const threshold = 60; // pixels from bottom
         const isNearBottom = window.innerHeight - event.clientY < threshold;
@@ -254,13 +254,13 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         if (didDrag || !isPausedRef.value || inputMode !== 'add-planet') return;
 
         position = {
-                x: lastMouseEvent.x,
-                y: lastMouseEvent.y
-            };
+            x: lastMouseEvent.x,
+            y: lastMouseEvent.y
+        };
 
-            const rect = canvas.getBoundingClientRect();
-            const screenX = event.clientX - rect.left;
-            const screenY = event.clientY - rect.top;
+        const rect = canvas.getBoundingClientRect();
+        const screenX = event.clientX - rect.left;
+        const screenY = event.clientY - rect.top;
 
         if (addBodyMenu) {
             addBodyMenu.style.left = `${screenX}px`;
@@ -271,42 +271,41 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
     toggleButton.addEventListener('click', function () {
         diagnosticsOpen = !diagnosticsOpen;
-        const isVisible = infoBox.style.display === 'block';
-        infoBox.style.display = isVisible ? 'none' : 'block';
-        toggleButton.querySelector('p').textContent = isVisible ? '↑' : '↓';
+        infoBox.classList.toggle('visible', diagnosticsOpen);
+        toggleButton.querySelector('p').textContent = diagnosticsOpen ? '↓' : '↑';
     });
-
+    
     document.addEventListener('DOMContentLoaded', function () {
-    const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
-    const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
+        const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
+        const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 
-    addSunOption.addEventListener('click', function () {
-        if (!isPausedRef.value) return;
-        const sunMass = 10000;
-        const sunRadius = 50;
-        const sunPos = { x: position.x, y: position.y };
-        const sunVelocity = { x: 0, y: 0 };
-        suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
-        predictAllPaths(planets, suns);
-        hideMenu();
+        addSunOption.addEventListener('click', function () {
+            if (!isPausedRef.value) return;
+            const sunMass = 10000;
+            const sunRadius = 50;
+            const sunPos = { x: position.x, y: position.y };
+            const sunVelocity = { x: 0, y: 0 };
+            suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
+            predictAllPaths(planets, suns);
+            hideMenu();
+        });
+
+        addPlanetOption.addEventListener('click', function () {
+            if (!isPausedRef.value) return;
+            const planetMass = 1;
+            const planetRadius = 10;
+            const planetPos = { x: position.x, y: position.y };
+            const planetVelocity = { x: 1, y: -1 };
+            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            predictAllPaths(planets, suns);
+            hideMenu();
+        });
+
+        function hideMenu() {
+            const menu = document.getElementById('addBody');
+            if (menu) menu.style.display = 'none';
+        }
     });
-
-    addPlanetOption.addEventListener('click', function () {
-        if (!isPausedRef.value) return;
-        const planetMass = 1;
-        const planetRadius = 10;
-        const planetPos = { x: position.x, y: position.y };
-        const planetVelocity = { x: 1, y: -1 };
-        planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-        predictAllPaths(planets, suns);
-        hideMenu();
-    });
-
-    function hideMenu() {
-        const menu = document.getElementById('addBody');
-        if (menu) menu.style.display = 'none';
-    }
-});
 }
 
 

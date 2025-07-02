@@ -146,7 +146,8 @@ canvas {
 }
 
 .diagnos-info {
-  display: none;
+  display: flex;
+  justify-content: space-between;
   background-color: rgba(20, 20, 20, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
@@ -154,7 +155,36 @@ canvas {
   color: white;
   font-size: 12px;
   margin-top: 4px;
+  width: 100%; 
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10;
 }
+
+.diagnos-info p {
+  flex: 1;            
+  text-align: center;
+}
+
+.diagnos-info.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.slider-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  font-size: 12px;
+}
+
+.slider-container input[type="range"] {
+  width: 80%;
+}
+
 
 .warning {
     display: flex;
