@@ -1,7 +1,6 @@
 import { G } from './constants.js';
 import { randomIntFromRange } from './utils.js';
 import { applyMutualGravity } from './utils.js';
-
 import FarStars from './stars.js';
 
 export function init(canvas) {
@@ -19,10 +18,14 @@ export function init(canvas) {
 }
 
 
-export function predictAllPaths(planets, suns = [], steps = 10000) {
+
+export function predictAllPaths(planets, suns = []) {
   const allBodies = [...suns, ...planets].map(b => b.clone());
   const paths = allBodies.map(() => []);
   //console.log([paths]);
+
+  const stepsInput = document.getElementById('total-steps');
+  const steps = stepsInput ? parseInt(stepsInput.value, 10) : 10000;
 
   for (let step = 0; step < steps; step++) {
     for (let i = 0; i < allBodies.length; i++) {

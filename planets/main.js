@@ -2,6 +2,7 @@ import { canvas } from './canvas.js';
 import { content } from './canvas.js';
 import { camera } from './camera.js';
 import { registerEvents } from './events.js';
+import { bindSliderToPrediction } from './userControls.js';
 
 import { init, animate } from './simulation.js';
 
@@ -27,6 +28,8 @@ function start() {
     planets = initData.planets;
     moons = initData.moons;
     distantStars = initData.distantStars;
+
+    bindSliderToPrediction(planets, suns);
 
     registerEvents(
         mouse,

@@ -5,7 +5,9 @@ const massInput = document.getElementById('mass-input');
 const velXInput = document.getElementById('velx-input');
 const velYInput = document.getElementById('vely-input');
 const radiusInput = document.getElementById('radius-input');
-const colourInput = document.getElementById('colour-input')
+const colourInput = document.getElementById('colour-input');
+const stepsSlider = document.getElementById('total-steps');
+    const stepsValueDisplay = document.getElementById('steps-value');
 
 export function updateEditorUI(planet) {
     if (!planet) {
@@ -47,4 +49,18 @@ export function bindEditorEvents(planet, planets = [], suns = []) {
         planet.color = colourInput.value;
         predictAllPaths(planets, suns);
     };
+}
+
+export function bindSliderToPrediction(planets, suns) {
+    const stepsSlider = document.getElementById('total-steps');
+    const stepsValueDisplay = document.getElementById('steps-value');
+
+    if (stepsSlider && stepsValueDisplay) {
+        stepsSlider.addEventListener('input', () => {
+            stepsValueDisplay.textContent = stepsSlider.value;
+            predictAllPaths(planets, suns);
+        });
+    } else {
+        console.warn('Slider or steps-value not found in DOM.');
+    }
 }
