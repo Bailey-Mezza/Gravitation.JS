@@ -119,12 +119,15 @@ canvas {
 
 #diagnostic {
   position: absolute;
-  width: 100%;
-  bottom: 0px;
+  bottom: 0;
   left: 50%;
+  width: 100%;
   transform: translateX(-50%);
-  text-align: center;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
 }
 
 .popup-button {
@@ -134,11 +137,12 @@ canvas {
   border-radius: 5px 5px 0 0;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s ease;
   user-select: none;
   opacity: 0.05;
   transition: opacity 0.3s ease, background-color 0.2s ease;
-  z-index: 10; 
+  z-index: 10;
+  pointer-events: auto;
+  margin-bottom: 8px; /* Pushes it above the menu */
 }
 
 .popup-button:hover {
@@ -146,30 +150,33 @@ canvas {
 }
 
 .diagnos-info {
+  position: absolute;
+  bottom: 0;
   display: flex;
   justify-content: space-between;
   background-color: rgba(20, 20, 20, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+  border-radius: 6px 6px 0 0;
   padding: 8px;
   color: white;
   font-size: 12px;
-  margin-top: 4px;
-  width: 100%; 
+  width: 100%;
+  max-width: 600px;
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: auto;
   z-index: 10;
-}
-
-.diagnos-info p {
-  flex: 1;            
-  text-align: center;
 }
 
 .diagnos-info.visible {
   visibility: visible;
   opacity: 1;
+}
+
+.diagnos-info p {
+  flex: 1;            
+  text-align: center;
 }
 
 .slider-container {
