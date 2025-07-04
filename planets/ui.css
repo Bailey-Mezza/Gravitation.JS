@@ -177,6 +177,10 @@ canvas {
 .diagnos-info p {
   flex: 1;            
   text-align: center;
+  color: #00eaff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 4px rgba(0, 234, 255, 0.6);
 }
 
 .slider-container {
@@ -184,12 +188,34 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: #00eaff;
   font-size: 12px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 4px rgba(0, 234, 255, 0.5);
 }
 
 .slider-container input[type="range"] {
   width: 80%;
+}
+
+.diagnos-info button {
+  color: #00eaff;
+  background: radial-gradient(ellipse at center, #111820 0%, #0a0f17 100%);
+  border: 2px solid #00eaff;
+  border-radius: 8px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6),
+              inset 0 0 6px rgba(0, 234, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.diagnos-info button:hover {
+  background: #00eaff;
+  color: #0a0f17;
+  box-shadow: 0 0 16px rgba(0, 234, 255, 1),
+              inset 0 0 10px rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
 }
 
 

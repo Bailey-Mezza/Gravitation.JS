@@ -42,16 +42,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
         const panSpeed = 20 / scaleRef.value;
         switch (event.code) {
-            case 'ArrowUp':
             case 'KeyW':
                 camera.y -= panSpeed; break;
-            case 'ArrowDown':
             case 'KeyS':
                 camera.y += panSpeed; break;
-            case 'ArrowLeft':
             case 'KeyA':
                 camera.x -= panSpeed; break;
-            case 'ArrowRight':
             case 'KeyD':
                 camera.x += panSpeed; break;
             case 'Digit1':
