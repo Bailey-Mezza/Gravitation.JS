@@ -142,7 +142,7 @@ canvas {
   transition: opacity 0.3s ease, background-color 0.2s ease;
   z-index: 10;
   pointer-events: auto;
-  margin-bottom: 8px; /* Pushes it above the menu */
+  margin-bottom: 8px;
 }
 
 .popup-button:hover {

@@ -269,6 +269,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         diagnosticsOpen = !diagnosticsOpen;
         infoBox.classList.toggle('visible', diagnosticsOpen);
         toggleButton.querySelector('p').textContent = diagnosticsOpen ? '↓' : '↑';
+        toggleButton.style.marginBottom = diagnosticsOpen ? '60px' : '8px';
     });
     
     document.addEventListener('DOMContentLoaded', function () {
