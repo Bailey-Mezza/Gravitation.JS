@@ -271,7 +271,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         toggleButton.querySelector('p').textContent = diagnosticsOpen ? '↓' : '↑';
         toggleButton.style.marginBottom = diagnosticsOpen ? '60px' : '8px';
     });
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
         const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
@@ -303,9 +303,75 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             if (menu) menu.style.display = 'none';
         }
     });
+
+    document.getElementById('export-button').addEventListener('click', () => {
+        const state = {
+            suns: suns.map(sun => ({
+                mass: sun.mass,
+                radius: sun.radius,
+                position: sun.position,
+                velocity: sun.velocity
+            })),
+            planets: planets.map(planet => ({
+                mass: planet.mass,
+                radius: planet.radius,
+                position: planet.position,
+                velocity: planet.velocity
+            }))
+        };
+
+        const json = JSON.stringify(state, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+
+        const simName = state.name ? state.name.replace(/\s+/g, '_') : 'gravity_sim';
+        const filename = `${simName}_${timestamp}.json`;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('import-button').addEventListener('click', () => {
+        document.getElementById('import-file').click();
+    });
+
+    document.getElementById('import-file').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const content = e.target.result;
+            try {
+                const state = JSON.parse(content);
+                console.log("Loaded state from file:", state);
+                loadSimulationState(state, suns, planets);
+            } catch (err) {
+                console.error("Invalid JSON:", err);
+            }
+        };
+        reader.readAsText(file);
+    });
+
 }
 
+function loadSimulationState(state, suns, planets) {
+    suns.length = 0;
+    planets.length = 0;
 
+    state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
+    state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
+
+    predictAllPaths(planets, suns);
+}
 
 function showSymbol(isPaused) {
     // Hide both

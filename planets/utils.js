@@ -37,4 +37,3 @@ export function applyMutualGravity(parent, child, G) {
   parent.velocity.x -= fx / parent.mass;
   parent.velocity.y -= fy / parent.mass;
 }
-
