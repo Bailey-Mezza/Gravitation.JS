@@ -80,19 +80,18 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'KeyI') {
-            for (let planet of planets) {
-                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
+            allBodies = getAllBodies(suns, planets);
+            for (let body of allBodies) {
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, body.position.x, body.position.y);
                 let selectedPlanet = null;
-                if (dist < planet.radius) {
-                    console.log("Planet Mass : " + planet.mass + "\n" + "Planet Position X : " + planet.position.x + " Y: " + planet.position.y + "\n" + "Planet Velocity X : " + planet.velocity.x + " Y: " + planet.velocity.y + "\n" + "Planet Radius : " + planet.radius);
-
-                    if (selectedPlanet === planet) {
+                if (dist < body.radius) {
+                    if (selectedPlanet === body) {
                         selectedPlanet = null;
                         updateEditorUI(null);
                     } else {
-                        selectedPlanet = planet;
-                        updateEditorUI(planet);
-                        bindEditorEvents(planet, planets, suns);
+                        selectedPlanet = body;
+                        updateEditorUI(body);
+                        bindEditorEvents(body, planets, suns);
                     }
                     break;
                 }

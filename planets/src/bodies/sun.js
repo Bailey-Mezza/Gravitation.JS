@@ -1,5 +1,7 @@
 import Body from './body.js';
 import { content } from '../core/canvas.js';
+import { lightenColor, shadowColor } from '../logic/utils.js';
+
 
 export default class Sun extends Body {
   constructor(mass, position, velocity, radius) {
@@ -12,11 +14,14 @@ export default class Sun extends Body {
       this.position.x, this.position.y, 0,
       this.position.x, this.position.y, this.radius * 2.5
     );
-    gradient.addColorStop(0, 'rgba(255, 255, 200, 1)');
+    
+    const innerColor = lightenColor(this.color);
+    gradient.addColorStop(0, innerColor);
     gradient.addColorStop(0.5, this.color);
     gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
 
-    content.shadowColor = 'rgba(255, 255, 100, 0.8)';
+    const shadow = shadowColor(this.color);
+    content.shadowColor = shadow;
     content.shadowBlur = 50;
 
     content.beginPath();

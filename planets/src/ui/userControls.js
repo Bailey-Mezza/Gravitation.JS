@@ -1,4 +1,5 @@
 import { predictAllPaths } from '../core/simulation.js';
+import { hexToRGB, rgbToHex }  from '../logic/utils.js';
 
 const editor = document.getElementById('planet-editor');
 const massInput = document.getElementById('mass-input');
@@ -7,44 +8,45 @@ const velYInput = document.getElementById('vely-input');
 const radiusInput = document.getElementById('radius-input');
 const colourInput = document.getElementById('colour-input');
 
-export function updateEditorUI(planet) {
-    if (!planet) {
+export function updateEditorUI(body) {
+    if (!body) {
         editor.style.display = 'none';
         return;
     }
     editor.style.display = 'block';
-    massInput.value = planet.mass;
-    velXInput.value = planet.velocity.x;
-    velYInput.value = planet.velocity.y;
-    radiusInput.value = planet.radius;
-    colourInput.value = planet.color;
+    massInput.value = body.mass;
+    velXInput.value = body.velocity.x;
+    velYInput.value = body.velocity.y;
+    radiusInput.value = body.radius;
+    colourInput.value = rgbToHex(body.color);
 }
 
 // Hook inputs to the selected planet
-export function bindEditorEvents(planet, suns, planets = []) {
-    if (!planet || !planets.map) return;
+export function bindEditorEvents(body, suns, planets = []) {
+    if (!body || !planets.map) return;
     massInput.oninput = () => {
-        planet.mass = parseFloat(massInput.value);
+        body.mass = parseFloat(massInput.value);
         predictAllPaths(suns, planets);
     };
 
     velXInput.oninput = () => {
-        planet.velocity.x = parseFloat(velXInput.value);
+        body.velocity.x = parseFloat(velXInput.value);
         predictAllPaths(suns, planets);
     };
 
     velYInput.oninput = () => {
-        planet.velocity.y = parseFloat(velYInput.value);
+        body.velocity.y = parseFloat(velYInput.value);
         predictAllPaths(suns, planets);
     };
 
     radiusInput.oninput = () => {
-        planet.radius = parseFloat(radiusInput.value);
+        body.radius = parseFloat(radiusInput.value);
         predictAllPaths(suns, planets);
     };
 
     colourInput.oninput = () => {
-        planet.color = colourInput.value;
+        const rgbColor = hexToRGB(colourInput.value);
+        body.color = rgbColor;
         predictAllPaths(suns, planets);
     };
 }
