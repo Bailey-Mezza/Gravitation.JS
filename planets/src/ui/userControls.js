@@ -21,42 +21,42 @@ export function updateEditorUI(planet) {
 }
 
 // Hook inputs to the selected planet
-export function bindEditorEvents(planet, planets = [], suns = []) {
+export function bindEditorEvents(planet, suns, planets = []) {
     if (!planet || !planets.map) return;
     massInput.oninput = () => {
         planet.mass = parseFloat(massInput.value);
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
     };
 
     velXInput.oninput = () => {
         planet.velocity.x = parseFloat(velXInput.value);
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
     };
 
     velYInput.oninput = () => {
         planet.velocity.y = parseFloat(velYInput.value);
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
     };
 
     radiusInput.oninput = () => {
         planet.radius = parseFloat(radiusInput.value);
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
     };
 
     colourInput.oninput = () => {
         planet.color = colourInput.value;
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
     };
 }
 
-export function bindSliderToPrediction(planets, suns) {
+export function bindSliderToPrediction(suns, planets) {
     const stepsSlider = document.getElementById('total-steps');
     const stepsValueDisplay = document.getElementById('steps-value');
 
     if (stepsSlider && stepsValueDisplay) {
         stepsSlider.addEventListener('input', () => {
             stepsValueDisplay.textContent = stepsSlider.value;
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
         });
     } else {
         console.warn('Slider or steps-value not found in DOM.');

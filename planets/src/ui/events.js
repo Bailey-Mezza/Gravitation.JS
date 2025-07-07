@@ -1,7 +1,7 @@
 import { canvas } from '../core/canvas.js';
 import { G } from '../logic/constants.js';
 import { camera } from '../core/camera.js';
-import { getDistance, getWorldMousePosition } from '../logic/utils.js';
+import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
 import { predictAllPaths } from '../core/simulation.js';
 import Sun from '../bodies/Sun.js';
 import Planet from '../bodies/Planet.js';
@@ -22,6 +22,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
     let inputMode = 'default';
     let diagnosticsOpen = false;
     let position = {};
+    let allBodies = [];
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -35,7 +36,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             updateEditorUI(null);
             addBodyMenu.style.display = 'none';
         }
-        predictAllPaths(planets, suns);
+        predictAllPaths(suns, planets);
         //console.log(event);
 
         if (!isPausedRef.value) return;
@@ -57,19 +58,20 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'KeyO') {
-            for (let planet of planets) {
-                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
+            allBodies = getAllBodies(suns, planets);
+            for (let body of allBodies) {
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, body.position.x, body.position.y);
                 // console.log('Mouse world position:', worldMouse);
                 // console.log('Planet position:', planet.position);
                 // console.log('Distance:', dist, 'Radius:', planet.radius)
-                if (dist < planet.radius) {
+                if (dist < body.radius) {
 
-                    if (followTargetRef.value === planet) {
+                    if (followTargetRef.value === body) {
                         followTargetRef.value = null;
                     } else {
-                        followTargetRef.value = planet;
-                        cameraRef.x = planet.position.x;
-                        cameraRef.y = planet.position.y;
+                        followTargetRef.value = body;
+                        cameraRef.x = body.position.x;
+                        cameraRef.y = body.position.y;
                     }
                     break;
                 }
@@ -95,7 +97,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     break;
                 }
             }
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
         }
 
         if (event.code === 'KeyP') {
@@ -128,7 +130,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
             }
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
         }
 
         if (event.code === 'KeyT') {
@@ -167,7 +169,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
 
                 planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
             }
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
         }
 
         if (event.code === 'Backspace' || event.code === 'Delete') {
@@ -238,7 +240,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         if (draggingPlanet && isPausedRef.value) {
             draggingPlanet.position.x = worldMouse.x - offsetX;
             draggingPlanet.position.y = worldMouse.y - offsetY;
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
         }
     });
 
@@ -283,7 +285,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const sunPos = { x: position.x, y: position.y };
             const sunVelocity = { x: 0, y: 0 };
             suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
             hideMenu();
         });
 
@@ -294,7 +296,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             const planetPos = { x: position.x, y: position.y };
             const planetVelocity = { x: 1, y: -1 };
             planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            predictAllPaths(planets, suns);
+            predictAllPaths(suns, planets);
             hideMenu();
         });
 
@@ -370,7 +372,7 @@ function loadSimulationState(state, suns, planets) {
     state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
     state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
 
-    predictAllPaths(planets, suns);
+    predictAllPaths(suns, planets);
 }
 
 function showSymbol(isPaused) {

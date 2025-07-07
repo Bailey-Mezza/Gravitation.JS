@@ -18,6 +18,10 @@ export function getWorldMousePosition(event, scale) {
     return screenToWorld(screenX, screenY, scale);
 }
 
+export function getAllBodies(suns, planets) { 
+  return [...suns, ...planets];
+}
+
 export function applyMutualGravity(parent, child, G) {
   const dx = parent.position.x - child.position.x;
   const dy = parent.position.y - child.position.y;
@@ -37,3 +41,4 @@ export function applyMutualGravity(parent, child, G) {
   parent.velocity.x -= fx / parent.mass;
   parent.velocity.y -= fy / parent.mass;
 }
+
