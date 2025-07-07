@@ -1,6 +1,5 @@
-import { G } from './constants.js';
-import { randomIntFromRange } from './utils.js';
-import { applyMutualGravity } from './utils.js';
+import { G } from '../logic/constants.js';
+import { randomIntFromRange, applyMutualGravity } from '../logic/utils.js';
 import FarStars from './stars.js';
 
 export function init(canvas) {

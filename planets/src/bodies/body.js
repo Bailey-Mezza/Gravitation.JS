@@ -1,6 +1,6 @@
-import { content } from '../canvas.js';
-import { G } from '../constants.js';
-import { applyMutualGravity } from '../utils.js';
+import { content } from '../core/canvas.js';
+import { G } from '../logic/constants.js';
+import { applyMutualGravity } from '../logic/utils.js';
 
 export default class Body {
   constructor(mass, position, velocity, radius) {

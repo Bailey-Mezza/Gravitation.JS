@@ -1,10 +1,10 @@
-import { canvas } from './canvas.js';
-import { G } from './constants.js';
-import { camera } from './camera.js';
-import { getDistance, getWorldMousePosition } from './utils.js';
-import { predictAllPaths } from './simulation.js';
-import Sun from './bodies/Sun.js';
-import Planet from './bodies/Planet.js';
+import { canvas } from '../core/canvas.js';
+import { G } from '../logic/constants.js';
+import { camera } from '../core/camera.js';
+import { getDistance, getWorldMousePosition } from '../logic/utils.js';
+import { predictAllPaths } from '../core/simulation.js';
+import Sun from '../bodies/Sun.js';
+import Planet from '../bodies/Planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
 const pauseSymbol = document.getElementById('pause-symbol');

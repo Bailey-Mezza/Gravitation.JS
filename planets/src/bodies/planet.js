@@ -1,7 +1,7 @@
 import Body from './body.js';
-import { colorArray, G } from '../constants.js';
-import { content } from '../canvas.js';
-import { randomIntFromRange, applyMutualGravity } from '../utils.js';
+import { colorArray, G } from '../logic/constants.js';
+import { content } from '../core/canvas.js';
+import { randomIntFromRange, applyMutualGravity } from '../logic/utils.js';
 
 export default class Planet extends Body {
   constructor(mass, position, velocity, radius) {

@@ -1,5 +1,5 @@
-import { canvas } from './canvas.js';
-import { screenToWorld } from './camera.js';
+import { canvas } from '../core/canvas.js';
+import { screenToWorld } from '../core/camera.js';
 
 export function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);

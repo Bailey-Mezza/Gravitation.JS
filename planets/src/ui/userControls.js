@@ -1,4 +1,4 @@
-import { predictAllPaths } from './simulation.js';
+import { predictAllPaths } from '../core/simulation.js';
 
 const editor = document.getElementById('planet-editor');
 const massInput = document.getElementById('mass-input');
@@ -6,8 +6,6 @@ const velXInput = document.getElementById('velx-input');
 const velYInput = document.getElementById('vely-input');
 const radiusInput = document.getElementById('radius-input');
 const colourInput = document.getElementById('colour-input');
-const stepsSlider = document.getElementById('total-steps');
-    const stepsValueDisplay = document.getElementById('steps-value');
 
 export function updateEditorUI(planet) {
     if (!planet) {

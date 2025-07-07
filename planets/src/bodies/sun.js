@@ -1,5 +1,5 @@
 import Body from './body.js';
-import { content } from '../canvas.js';
+import { content } from '../core/canvas.js';
 
 export default class Sun extends Body {
   constructor(mass, position, velocity, radius) {

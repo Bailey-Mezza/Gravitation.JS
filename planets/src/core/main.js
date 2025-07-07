@@ -1,8 +1,7 @@
-import { canvas } from './canvas.js';
-import { content } from './canvas.js';
+import { canvas, content } from './canvas.js';
 import { camera } from './camera.js';
-import { registerEvents } from './events.js';
-import { bindSliderToPrediction } from './userControls.js';
+import { registerEvents } from '../ui/events.js';
+import { bindSliderToPrediction } from '../ui/userControls.js';
 
 import { init, animate } from './simulation.js';
 
