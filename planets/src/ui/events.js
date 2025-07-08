@@ -14,7 +14,7 @@ const infoBox = document.querySelector('.diagnos-info');
 const addBodyMenu = document.getElementById('addBody');
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
-    let draggingPlanet = null;
+    let draggingBody = null;
     let offsetX = 0;
     let offsetY = 0;
     let didDrag = false;
@@ -172,28 +172,42 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'Backspace' || event.code === 'Delete') {
-            for (let i = planets.length - 1; i >= 0; i--) {
-                const planetToRemove = planets[i];
-                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planetToRemove.position.x, planetToRemove.position.y);
-                if (dist < planetToRemove.radius) {
-                    planets.splice(i, 1);
-                    break;
+            allBodies = getAllBodies(suns, planets);
+            for (let i = allBodies.length - 1; i >= 0; i--) {
+                const body = allBodies[i];
+                const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, body.position.x, body.position.y);
+                if (dist < body.radius) {
+                    // Try to remove from planets
+                    const planetIndex = planets.indexOf(body);
+                    if (planetIndex !== -1) {
+                        planets.splice(planetIndex, 1);
+                        break;
+                    }
+                    // Try to remove from suns
+                    const sunIndex = suns.indexOf(body);
+                    if (sunIndex !== -1) {
+                        suns.splice(sunIndex, 1);
+                        break;
+                    }
                 }
             }
+            predictAllPaths(suns, planets); 
         }
+
     });
 
     window.addEventListener('mousedown', () => {
         if (!isPausedRef.value) return;
         didDrag = false;
 
-        for (let planet of planets) {
-            const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, planet.position.x, planet.position.y);
-            if (dist < planet.radius) {
+        allBodies = getAllBodies(suns, planets);
+        for (let body of allBodies) {
+            const dist = getDistance(lastMouseEvent.x, lastMouseEvent.y, body.position.x, body.position.y);
+            if (dist < body.radius) {
                 didDrag = true;
-                draggingPlanet = planet;
-                offsetX = lastMouseEvent.x - planet.position.x;
-                offsetY = lastMouseEvent.y - planet.position.y;
+                draggingBody = body;
+                offsetX = lastMouseEvent.x - body.position.x;
+                offsetY = lastMouseEvent.y - body.position.y;
                 break;
             }
         }
@@ -203,6 +217,8 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         const worldMouse = getWorldMousePosition(event, scaleRef.value);
         lastMouseEvent = worldMouse;
 
+
+        //Code for opening diagnostics menu when cursor is near the bottom of the screen
         const threshold = 60; // pixels from bottom
         const isNearBottom = window.innerHeight - event.clientY < threshold;
         const popupButton = document.querySelector('.popup-button');
@@ -212,39 +228,43 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             popupButton.style.opacity = '0.05';
         }
 
+        //Code to identify what the user is hovering with cursor to ensure planets can only be added when intended
         const isHoveringCanvas = event.target === canvas;
-
         if (isPausedRef.value && isHoveringCanvas) {
             inputMode = 'add-planet';
+            //Change cursor style for user visibility
             canvas.style.cursor = 'crosshair';
         } else {
             inputMode = 'default';
             canvas.style.cursor = 'default';
         }
-
-        for (let planet of planets) {
-            planet.highlighted = false;
+ 
+        allBodies = getAllBodies(suns, planets);
+        for (let body of allBodies) {
+            body.highlighted = false;
         }
 
-        for (let planet of planets) {
-            const dist = getDistance(worldMouse.x, worldMouse.y, planet.position.x, planet.position.y);
-            if (dist < planet.radius) {
+        for (let body of allBodies) {
+            const dist = getDistance(worldMouse.x, worldMouse.y, body.position.x, body.position.y);
+            if (dist < body.radius) {
                 inputMode = 'default';
                 canvas.style.cursor = 'default';
-                planet.highlighted = true;
+                if (isPausedRef.value) {
+                    body.highlighted = true;
+                }
                 break;
             }
         }
 
-        if (draggingPlanet && isPausedRef.value) {
-            draggingPlanet.position.x = worldMouse.x - offsetX;
-            draggingPlanet.position.y = worldMouse.y - offsetY;
+        if (draggingBody && isPausedRef.value) {
+            draggingBody.position.x = worldMouse.x - offsetX;
+            draggingBody.position.y = worldMouse.y - offsetY;
             predictAllPaths(suns, planets);
         }
     });
 
     window.addEventListener('mouseup', function () {
-        draggingPlanet = null;
+        draggingBody = null;
     });
 
     window.addEventListener('click', function (event) {

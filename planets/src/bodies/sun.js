@@ -7,6 +7,7 @@ export default class Sun extends Body {
   constructor(mass, position, velocity, radius) {
     super(mass, position, velocity, radius);
     this.color = 'rgb(237, 223, 133)';
+    this.highlighted = false;
   }
 
   draw() {
@@ -15,10 +16,13 @@ export default class Sun extends Body {
       this.position.x, this.position.y, this.radius * 2.5
     );
     
+    const color = this.highlighted ? 'rgb(255, 255, 255)' : this.color
+
     const innerColor = lightenColor(this.color);
     gradient.addColorStop(0, innerColor);
-    gradient.addColorStop(0.5, this.color);
+    gradient.addColorStop(0.5, color);
     gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+
 
     const shadow = shadowColor(this.color);
     content.shadowColor = shadow;
