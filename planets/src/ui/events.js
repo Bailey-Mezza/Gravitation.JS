@@ -12,6 +12,7 @@ const playSymbol = document.getElementById('play-symbol');
 const toggleButton = document.querySelector('.popup-button');
 const infoBox = document.querySelector('.diagnos-info');
 const addBodyMenu = document.getElementById('addBody');
+const presetMenu = document.getElementById('preset-menu-container');
 
 export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
     let draggingBody = null;
@@ -100,76 +101,27 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'KeyP') {
-            // Create sun
-            const sunMass = 10000;
-            const sunRadius = 50;
-            const sunPos = { x: canvas.width / 2, y: canvas.height / 2 };
-            const sunVelocity = { x: 0, y: 0 };
-            const sun = new Sun(sunMass, sunPos, sunVelocity, sunRadius);
-            suns.push(sun);
-
-            // Create planets
-            for (let i = 0; i < 3; i++) {
-                const planetMass = 10;
-                const planetRadius = 10;
-                const rMin = sunRadius + 100;
-                const rMax = canvas.height / 2 - planetRadius;
-                const r = rMin + Math.random() * (rMax - rMin);
-                const theta = Math.random() * 2 * Math.PI;
-                const planetPos = {
-                    x: sunPos.x + r * Math.cos(theta),
-                    y: sunPos.y + r * Math.sin(theta),
-                };
-
-                const orbitalSpeed = Math.sqrt(G * sunMass / r);
-                const planetVelocity = {
-                    x: -orbitalSpeed * Math.sin(theta),
-                    y: orbitalSpeed * Math.cos(theta),
-                };
-
-                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            console.log("ello");
+            
+            if (presetMenu.style.display ==='none') {
+                presetMenu.style.display = 'block';
+            } else {
+                presetMenu.style.display = 'none';
             }
-            predictAllPaths(suns, planets);
+
+            // fetch('../public/presets.json')
+            //     .then(res => {
+            //         if (!res.ok) throw new Error("Failed to load presets");
+            //         return res.json();
+            //     })
+            //     .then(presets => {
+            //         const firstPreset = presets[2];
+            //         console.log("Loading preset:", firstPreset.name);
+            //         loadSimulationState(firstPreset, suns, planets);
+            //     })
+            //     .catch(err => console.error("Error loading preset:", err));
         }
 
-        if (event.code === 'KeyT') {
-            // Three Body Problem
-            const threeBody = {
-                masses: [1000, 1000, 1000],
-                positions: [
-                    { x: -0.97000436, y: 0.24308753 },  // Body A
-                    { x: 0.97000436, y: -0.24308753 },  // Body B
-                    { x: 0.0, y: 0.0 }   // Body C
-                ],
-                velocities: [
-                    { x: 0.4662036850, y: 0.4323657300 },   // Body A
-                    { x: 0.4662036850, y: 0.4323657300 },   // Body B
-                    { x: -0.93240737, y: -0.86473146 }    // Body C
-                ]
-            };
-            for (let i = 0; i < 3; i++) {
-                const planetMass = threeBody.masses[i];
-                const planetRadius = 20;
-
-                // Scale and translate to fit canvas if needed
-                const scale = 150;  // optional, to make the figure-8 visible
-                const offsetX = canvas.width / 2;
-                const offsetY = canvas.height / 2;
-
-                const planetPos = {
-                    x: offsetX + threeBody.positions[i].x * scale,
-                    y: offsetY + threeBody.positions[i].y * scale
-                };
-
-                const planetVelocity = {
-                    x: threeBody.velocities[i].x * 1.211,
-                    y: threeBody.velocities[i].y * 1.211
-                };
-
-                planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            }
-            predictAllPaths(suns, planets);
-        }
 
         if (event.code === 'Backspace' || event.code === 'Delete') {
             allBodies = getAllBodies(suns, planets);
@@ -191,7 +143,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
                     }
                 }
             }
-            predictAllPaths(suns, planets); 
+            predictAllPaths(suns, planets);
         }
 
     });
@@ -238,7 +190,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             inputMode = 'default';
             canvas.style.cursor = 'default';
         }
- 
+
         allBodies = getAllBodies(suns, planets);
         for (let body of allBodies) {
             body.highlighted = false;
