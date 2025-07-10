@@ -291,7 +291,6 @@ canvas {
     letter-spacing: 1.5px;
     max-width: 960px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    display: none;
 }
 
 .preset-menu h2 {
@@ -341,4 +340,8 @@ canvas {
     border-radius: 5px;
     background-size: cover;
     background-position: center;
+}
+
+.hidden {
+    display: none !important;
 }

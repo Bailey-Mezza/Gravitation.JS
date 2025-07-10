@@ -2,6 +2,7 @@ import { canvas, content } from './canvas.js';
 import { camera } from './camera.js';
 import { registerEvents } from '../ui/events.js';
 import { bindSliderToPrediction } from '../ui/userControls.js';
+import { getPresets } from '../logic/utils.js';
 
 import { init, animate } from './simulation.js';
 
@@ -14,6 +15,7 @@ export let distantStars = [];
 export let scale = 1;
 export let isPaused = false;
 export let followTarget = { value: null };
+export let presets = [];
 
 // References passed to event handlers
 const scaleRef = { value: scale };
@@ -21,12 +23,13 @@ const isPausedRef = { value: isPaused };
 
 
 // Initialize and start simulation
-function start() {
+async function start() {
     const initData = init(canvas);
     suns = initData.suns;
     planets = initData.planets;
     moons = initData.moons;
     distantStars = initData.distantStars;
+    presets = await getPresets();
 
     bindSliderToPrediction(planets, suns);
 
@@ -37,7 +40,8 @@ function start() {
         isPausedRef,
         followTarget,
         camera,
-        suns
+        suns,
+        presets
     );
 
     animate({

@@ -1,5 +1,4 @@
 import { canvas } from '../core/canvas.js';
-import { G } from '../logic/constants.js';
 import { camera } from '../core/camera.js';
 import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
 import { predictAllPaths } from '../core/simulation.js';
@@ -7,14 +6,19 @@ import Sun from '../bodies/Sun.js';
 import Planet from '../bodies/Planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
+//Getting elements from HTML
 const pauseSymbol = document.getElementById('pause-symbol');
 const playSymbol = document.getElementById('play-symbol');
 const toggleButton = document.querySelector('.popup-button');
 const infoBox = document.querySelector('.diagnos-info');
 const addBodyMenu = document.getElementById('addBody');
 const presetMenu = document.getElementById('preset-menu-container');
+const presetBoxes = document.querySelectorAll('.preset-box');
+const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
+const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 
-export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns) {
+
+export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
     let draggingBody = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -101,25 +105,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         }
 
         if (event.code === 'KeyP') {
-            console.log("ello");
-            
-            if (presetMenu.style.display ==='none') {
-                presetMenu.style.display = 'block';
-            } else {
-                presetMenu.style.display = 'none';
-            }
-
-            // fetch('../public/presets.json')
-            //     .then(res => {
-            //         if (!res.ok) throw new Error("Failed to load presets");
-            //         return res.json();
-            //     })
-            //     .then(presets => {
-            //         const firstPreset = presets[2];
-            //         console.log("Loading preset:", firstPreset.name);
-            //         loadSimulationState(firstPreset, suns, planets);
-            //     })
-            //     .catch(err => console.error("Error loading preset:", err));
+            presetMenu.classList.toggle('hidden');
         }
 
 
@@ -245,10 +231,7 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
         toggleButton.style.marginBottom = diagnosticsOpen ? '60px' : '8px';
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
-        const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
-
+    if (addSunOption && addPlanetOption) {
         addSunOption.addEventListener('click', function () {
             if (!isPausedRef.value) return;
             const sunMass = 10000;
@@ -270,12 +253,12 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             predictAllPaths(suns, planets);
             hideMenu();
         });
+    }
 
-        function hideMenu() {
-            const menu = document.getElementById('addBody');
-            if (menu) menu.style.display = 'none';
-        }
-    });
+    function hideMenu() {
+        const menu = document.getElementById('addBody');
+        if (menu) menu.style.display = 'none';
+    }
 
     document.getElementById('export-button').addEventListener('click', () => {
         const state = {
@@ -332,6 +315,19 @@ export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTarg
             }
         };
         reader.readAsText(file);
+    });
+
+    presetBoxes.forEach(box => {
+        box.addEventListener('click', () => {
+            const presetKey = box.dataset.preset;
+            const presetIndex = parseInt(presetKey.replace('preset', ''), 10) - 1;
+            const preset = presets[presetIndex];
+
+            if (preset) {
+                loadSimulationState(preset, suns, planets);
+                document.getElementById('preset-menu-container').classList.add('hidden');
+            }
+        });
     });
 
 }

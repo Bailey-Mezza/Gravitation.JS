@@ -1,5 +1,6 @@
 import { canvas } from '../core/canvas.js';
 import { screenToWorld } from '../core/camera.js';
+import { presets } from '../core/main.js';
 
 export function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -69,6 +70,19 @@ export function rgbToHex(rgb) {
 
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+export async function getPresets() {
+  try {
+    const res = await fetch('../public/presets.json');
+    if (!res.ok) throw new Error("Failed to load presets");
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Error loading presets:", err);
+    return [];
+  }
+}
+
 
 export function applyMutualGravity(parent, child, G) {
   const dx = parent.position.x - child.position.x;
