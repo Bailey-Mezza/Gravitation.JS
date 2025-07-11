@@ -342,6 +342,11 @@ canvas {
     background-position: center;
 }
 
+.preset-image img {
+    width: 100%;
+    height: 120px;
+}
+
 .hidden {
     display: none !important;
 }
