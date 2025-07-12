@@ -38,18 +38,43 @@ export default class Sun extends Body {
     content.shadowBlur = 0;
   }
 
-  drawPredictedPath() {
-    if (!this.predictedPath || this.predictedPath.length < 2) return;
-    content.beginPath();
-    content.moveTo(this.predictedPath[0].x, this.predictedPath[0].y);
-    for (let i = 1; i < this.predictedPath.length; i++) {
-      content.lineTo(this.predictedPath[i].x, this.predictedPath[i].y);
+  drawPredictedPath(followTarget = null, canvas) {
+  if (!this.predictedPath || this.predictedPath.length < 2) return;
+
+  content.beginPath();
+
+  for (let i = 0; i < this.predictedPath.length; i++) {
+    let x = this.predictedPath[i].x;
+    let y = this.predictedPath[i].y;
+
+    // Apply relative position if a follow target is set and is not this body
+    if (
+      followTarget &&
+      followTarget !== this &&
+      followTarget.predictedPath &&
+      followTarget.predictedPath[i]
+    ) {
+      x -= followTarget.predictedPath[i].x;
+      y -= followTarget.predictedPath[i].y;
     }
-    content.strokeStyle = this.color;
-    content.lineWidth = 1;
-    content.setLineDash([5, 5]);
-    content.stroke();
-    content.setLineDash([]);
-    content.closePath();
+
+    // // Translate to screen coordinates (camera is now 0,0 because you're following)
+    const screenX = x + canvas.width / 2;
+    const screenY = y + canvas.height / 2;
+
+    if (i === 0) {
+      content.moveTo(screenX, screenY);
+    } else {
+      content.lineTo(screenX, screenY);
+    }
   }
+
+  content.strokeStyle = this.color;
+  content.lineWidth = 1;
+  content.setLineDash([5, 5]);
+  content.stroke();
+  content.setLineDash([]);
+  content.closePath();
+}
+
 }

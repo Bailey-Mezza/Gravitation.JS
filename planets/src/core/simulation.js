@@ -16,8 +16,6 @@ export function init(canvas) {
   return { suns: [], planets: [], moons: [], distantStars };
 }
 
-
-
 export function predictAllPaths(planets, suns = []) {
   const allBodies = [...suns, ...planets].map(b => b.clone());
   const paths = allBodies.map(() => []);
@@ -92,13 +90,13 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
     const avgFps = fpsArray.reduce((a, b) => a + b, 0) / fpsArray.length;
 
     const fpsWarning = document.getElementById('fps-warning');
-        if (fpsWarning) {
-          if (avgFps < 30) {
-                fpsWarning.style.display = 'block';
-            } else {
-                fpsWarning.style.display = 'none';
-            }
-        }
+    if (fpsWarning) {
+      if (avgFps < 30) {
+        fpsWarning.style.display = 'block';
+      } else {
+        fpsWarning.style.display = 'none';
+      }
+    }
 
     if (now - lastUpdateTime > 500) {
       const fpsData = document.getElementById('fps');
@@ -118,6 +116,7 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
       if (suns.length && planets.length && !planets[0].predictedPath) {
         predictAllPaths(planets, suns);
       }
+
       allBodies.forEach(body => {
         body.drawPredictedPath(followTargetRef.value, canvas);
         body.draw();

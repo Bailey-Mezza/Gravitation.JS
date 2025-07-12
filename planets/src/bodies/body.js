@@ -24,35 +24,6 @@ export default class Body {
     this.position.y += this.velocity.y;
     this.draw();
   }
-//Old gravvitate function
-  // gravitate(child) {
-  //       // Vector from child to sun
-  //       let dx = this.position.x - child.position.x;
-  //       let dy = this.position.y - child.position.y;
-
-  //       // Distance between child and sun
-  //       let r = Math.sqrt(dx * dx + dy * dy);
-
-  //       // Avoid division by zero
-  //       if (r === 0) return;
-
-  //       // Force magnitude (mass can be included if needed)
-  //       let force = G * this.mass * child.mass / (r * r);
-
-  //       let ax = force * dx / r / child.mass;
-  //       let ay = force * dy / r / child.mass;
-  //       // let bx = -force * dx / r / child.mass;
-  //       // let by = -force * dy / r / child.mass;
-
-  //       child.velocity.x += ax;
-  //       child.velocity.y += ay;
-  //       // this.velocity.x += bx;
-  //       // this.velocity.x += by;
-  //   }
- 
-    gravitate(child) {
-    applyMutualGravity(this, child, G);
-  }
 
   clone() {
     return new this.constructor(
@@ -61,5 +32,20 @@ export default class Body {
       { ...this.velocity },
       this.radius
     );
+  }
+
+drawPredictedPath() {
+    if (!this.predictedPath || this.predictedPath.length < 2) return;
+    content.beginPath();
+    content.moveTo(this.predictedPath[0].x, this.predictedPath[0].y);
+    for (let i = 1; i < this.predictedPath.length; i++) {
+      content.lineTo(this.predictedPath[i].x, this.predictedPath[i].y);
+    }
+    content.strokeStyle = this.color;
+    content.lineWidth = 1;
+    content.setLineDash([5, 5]);
+    content.stroke(); 
+    content.setLineDash([]);
+    content.closePath();
   }
 }
