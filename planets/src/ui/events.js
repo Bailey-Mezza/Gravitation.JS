@@ -2,8 +2,8 @@ import { canvas } from '../core/canvas.js';
 import { camera } from '../core/camera.js';
 import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
 import { predictAllPaths } from '../core/simulation.js';
-import Sun from '../bodies/Sun.js';
-import Planet from '../bodies/Planet.js';
+import Sun from '../bodies/sun.js';
+import Planet from '../bodies/planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
 //Getting elements from HTML
