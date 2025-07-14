@@ -21,6 +21,11 @@ const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 
 export function registerMobileEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
 
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
     if (!playSymbol || !pauseSymbol) {
         console.warn('Play or Pause symbol not found in DOM');
         return;
@@ -50,13 +55,9 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
     if (isPausedRef.value) {
         playSymbol.classList.remove('show');
         pauseSymbol.classList.add('show');
-        console.log("yip");
-        
     } else {
         pauseSymbol.classList.remove('show');
-        playSymbol.classList.remove('show'); 
-        console.log('ekl');
-        
+        playSymbol.classList.add('show'); 
     }
 
     // Reflect in your app

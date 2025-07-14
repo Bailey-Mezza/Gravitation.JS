@@ -1,6 +1,6 @@
 import { canvas } from '../core/canvas.js';
 import { camera } from '../core/camera.js';
-import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
+import { getDistance, getWorldMousePosition, getAllBodies, loadSimulationState } from '../logic/utils.js';
 import { predictAllPaths } from '../core/simulation.js';
 import Sun from '../bodies/sun.js';
 import Planet from '../bodies/planet.js';
@@ -330,16 +330,6 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
         });
     });
 
-}
-
-function loadSimulationState(state, suns, planets) {
-    suns.length = 0;
-    planets.length = 0;
-
-    state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
-    state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
-
-    predictAllPaths(suns, planets);
 }
 
 function showSymbol(isPaused) {

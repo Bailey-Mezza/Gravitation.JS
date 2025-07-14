@@ -83,6 +83,15 @@ export async function getPresets() {
   }
 }
 
+export function loadSimulationState(state, suns, planets) {
+    suns.length = 0;
+    planets.length = 0;
+
+    state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
+    state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
+
+    predictAllPaths(suns, planets);
+}
 
 export function applyMutualGravity(parent, child, G) {
   const dx = parent.position.x - child.position.x;

@@ -109,14 +109,14 @@ canvas {
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0;
+    display: none;
     transition: opacity 0.3s ease;
     pointer-events: auto;
     cursor: pointer;
 }
 
 .symbol.show {
-    opacity: 1;
+    display: block;
 }
 
 #diagnostic {
