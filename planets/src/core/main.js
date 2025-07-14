@@ -1,6 +1,7 @@
 import { canvas, content } from './canvas.js';
 import { camera } from './camera.js';
 import { registerEvents } from '../ui/events.js';
+import { registerMobileEvents } from '../ui/mobileEvents.js';
 import { bindSliderToPrediction } from '../ui/userControls.js';
 import { getPresets } from '../logic/utils.js';
 
@@ -21,6 +22,10 @@ export let presets = [];
 const scaleRef = { value: scale };
 const isPausedRef = { value: isPaused };
 
+//Recognise if mobile device is being used 
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+console.log(isMobile);
+
 
 // Initialize and start simulation
 async function start() {
@@ -33,16 +38,27 @@ async function start() {
 
     bindSliderToPrediction(planets, suns);
 
-    registerEvents(
-        mouse,
-        planets,
-        scaleRef,
-        isPausedRef,
-        followTarget,
-        camera,
-        suns,
-        presets
-    );
+    if (isMobile) {
+        registerMobileEvents(
+            planets,
+            scaleRef,
+            isPausedRef,
+            followTarget,
+            camera,
+            suns,
+            presets
+        );
+    } else {
+        registerEvents(
+            planets,
+            scaleRef,
+            isPausedRef,
+            followTarget,
+            camera,
+            suns,
+            presets
+        );
+    }
 
     animate({
         content, canvas, camera,

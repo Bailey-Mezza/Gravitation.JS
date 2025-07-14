@@ -18,7 +18,7 @@ const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
 const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 
 
-export function registerEvents(mouse, planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
+export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
     let draggingBody = null;
     let offsetX = 0;
     let offsetY = 0;
