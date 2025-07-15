@@ -1,6 +1,7 @@
 import { canvas } from '../core/canvas.js';
 import { screenToWorld } from '../core/camera.js';
-import { presets } from '../core/main.js';
+import Sun from '../bodies/sun.js';
+import Planet from '../bodies/planet.js';
 
 export function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
