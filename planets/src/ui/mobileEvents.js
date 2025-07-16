@@ -29,6 +29,8 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
     let diagnosticsOpen = false;
     let position = {};
     let allBodies = [];
+    let lastTouchDistance = null;
+    let lastPanTouch = null;
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -79,43 +81,33 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
 
     window.addEventListener('touchstart', (event) => {
         if (!isPausedRef.value) return;
-        didDrag = false;
-
-        // Get touch position (first touch only)
-        const touch = event.touches[0];
-        const touchX = touch.clientX;
-        const touchY = touch.clientY;
-
-        allBodies = getAllBodies(suns, planets);
-        for (let body of allBodies) {
-            const dist = getDistance(touchX, touchY, body.position.x, body.position.y);
-            if (dist < body.radius) {
-                didDrag = true;
-                draggingBody = body;
-                offsetX = touchX - body.position.x;
-                offsetY = touchY - body.position.y;
-                break;
-            }
-        }
-
-        lastTouchEvent = { x: touchX, y: touchY };
-    });
-
-    window.addEventListener('touchmove', function (event) {
         const touch = event.touches[0];
         if (!touch) return;
 
         const worldTouch = getWorldMousePosition(touch, scaleRef.value);
         lastTouchEvent = worldTouch;
+        didDrag = false;
+        lastPanTouch = { x: touch.clientX, y: touch.clientY };
+        draggingBody = null;
 
-        // Open diagnostics menu near bottom
-        const threshold = 60;
-        const isNearBottom = window.innerHeight - touch.clientY < threshold;
-        const popupButton = document.querySelector('.popup-button');
-        if (diagnosticsOpen || isNearBottom) {
-            popupButton.style.opacity = '1';
-        } else {
-            popupButton.style.opacity = '0.05';
+        allBodies = getAllBodies(suns, planets);
+
+        // Reset highlight
+        for (let body of allBodies) {
+            body.highlighted = false;
+        }
+
+        // Check if finger is on a planet
+        for (let body of allBodies) {
+            const dist = getDistance(worldTouch.x, worldTouch.y, body.position.x, body.position.y);
+            if (dist < body.radius) {
+                didDrag = true;
+                draggingBody = body;
+                offsetX = worldTouch.x - body.position.x;
+                offsetY = worldTouch.y - body.position.y;
+                body.highlighted = true;
+                break;
+            }
         }
 
         // Hover logic — adapt to finger being over canvas
@@ -128,32 +120,64 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             canvas.style.cursor = 'default';
         }
 
-        allBodies = getAllBodies(suns, planets);
-        for (let body of allBodies) {
-            body.highlighted = false;
+        lastTouchEvent = lastPanTouch;
+    });
+
+    window.addEventListener('touchmove', function (event) {
+        const touches = event.touches;
+        const panSpeed = 20 / scaleRef.value;
+
+        // === 2-FINGER ZOOM ===
+        if (touches.length === 2) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (lastTouchDistance !== null) {
+                const delta = distance - lastTouchDistance;
+                const zoomFactor = delta * 0.002; // sensitivity
+                scaleRef.value = Math.min(Math.max(scaleRef.value + zoomFactor, 0.1), 2);
+            }
+
+            lastTouchDistance = distance;
+            return;
+        } else {
+            lastTouchDistance = null; // reset pinch
         }
 
-        for (let body of allBodies) {
-            const dist = getDistance(worldTouch.x, worldTouch.y, body.position.x, body.position.y);
-            if (dist < body.radius) {
-                inputMode = 'default';
-                canvas.style.cursor = 'default';
-                if (isPausedRef.value) {
-                    body.highlighted = true;
-                }
-                break;
-            }
-        }
+        const touch = touches[0];
+        const worldTouch = getWorldMousePosition(touch, scaleRef.value);
+        lastTouchEvent = worldTouch;
 
         if (draggingBody && isPausedRef.value) {
             draggingBody.position.x = worldTouch.x - offsetX;
             draggingBody.position.y = worldTouch.y - offsetY;
             predictAllPaths(suns, planets);
+            didDrag = true;
+            return; // prevent pan
         }
-    }, { passive: true });
 
-    window.addEventListener('touchend', function () {
+        if (lastPanTouch) {
+            const dx = touch.clientX - lastPanTouch.x;
+            const dy = touch.clientY - lastPanTouch.y;
+
+            camera.x -= dx * panSpeed * 0.05;
+            camera.y -= dy * panSpeed * 0.05;
+
+            lastPanTouch = { x: touch.clientX, y: touch.clientY };
+        }
+
+        // const threshold = 60;
+        // const isNearBottom = window.innerHeight - touch.clientY < threshold;
+        // const popupButton = document.querySelector('.popup-button');
+        // popupButton.style.opacity = (diagnosticsOpen || isNearBottom) ? '1' : '0.05';
+    }, { passive: false });
+
+
+    window.addEventListener('touchend', () => {
         draggingBody = null;
+        lastTouchDistance = null;
+        lastPanTouch = null;
     });
 
     window.addEventListener('touchend', function (event) {
@@ -178,5 +202,33 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
         }
     });
 
+    if (addSunOption && addPlanetOption) {
+        addSunOption.addEventListener('click', function () {
+            if (!isPausedRef.value) return;
+            const sunMass = 10000;
+            const sunRadius = 50;
+            const sunPos = { x: position.x, y: position.y };
+            const sunVelocity = { x: 0, y: 0 };
+            suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
+            predictAllPaths(suns, planets);
+            hideMenu();
+        });
+
+        addPlanetOption.addEventListener('click', function () {
+            if (!isPausedRef.value) return;
+            const planetMass = 1;
+            const planetRadius = 10;
+            const planetPos = { x: position.x, y: position.y };
+            const planetVelocity = { x: 1, y: -1 };
+            planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
+            predictAllPaths(suns, planets);
+            hideMenu();
+        });
+    }
+
+    function hideMenu() {
+        const menu = document.getElementById('addBody');
+        if (menu) menu.style.display = 'none';
+    }
 
 }

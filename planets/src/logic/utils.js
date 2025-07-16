@@ -1,7 +1,5 @@
 import { canvas } from '../core/canvas.js';
 import { screenToWorld } from '../core/camera.js';
-import Sun from '../bodies/sun.js';
-import Planet from '../bodies/planet.js';
 
 export function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -82,16 +80,6 @@ export async function getPresets() {
     console.error("Error loading presets:", err);
     return [];
   }
-}
-
-export function loadSimulationState(state, suns, planets) {
-    suns.length = 0;
-    planets.length = 0;
-
-    state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
-    state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
-
-    predictAllPaths(suns, planets);
 }
 
 export function applyMutualGravity(parent, child, G) {
