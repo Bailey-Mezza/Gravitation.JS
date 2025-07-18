@@ -70,15 +70,41 @@ class MovingCircle {
 
     drawPredictedPath() {
         if (!this.predictedPath.length) return;
+
         content.beginPath();
-        content.moveTo(this.predictedPath[0].x - camera.x, this.predictedPath[0].y - camera.y);
-        for (let i = 1; i < this.predictedPath.length; i++) {
-            content.lineTo(this.predictedPath[i].x - camera.x, this.predictedPath[i].y - camera.y);
+
+        //console.log("Follow target path length:", followTarget?.predictedPath?.length);
+        //console.log(followTarget);
+        
+        for (let i = 0; i < this.predictedPath.length; i++) {
+            let px = this.predictedPath[i].x;
+            let py = this.predictedPath[i].y;
+
+            //
+            // Apply relative shift if following a target
+            if (followTarget && followTarget.predictedPath.length > i) {
+                py -= followTarget.predictedPath[i].x - followTarget.x;
+                px -= followTarget.predictedPath[i].y - followTarget.y;
+            }
+
+            // Convert to camera coordinates
+            px -= camera.x;
+            py -= camera.y;
+
+            if (i === 0) {
+                content.moveTo(px, py);
+            } else {
+                // console.log(px, py);
+                
+                content.lineTo(px, py);
+            }
         }
-        content.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+
+        content.strokeStyle = 'rgba(255, 255, 255, 1)';
         content.stroke();
         content.closePath();
     }
+
 
     update(direction) {
         this.draw();
@@ -95,15 +121,38 @@ class MovingCircle {
     }
 }
 
+
+function FarStars(x, y, radius) {
+  this.x = x;
+  this.y = y;
+  this.radius = radius;
+
+  this.draw = () => {
+    content.beginPath();
+    content.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    content.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    content.fill();
+    content.closePath();
+  };
+}
+
 let movingCircles;
 //Implementation
 function init() {
     movingCircles = [];
+    distantStars = [];
+
+    for (let index = 0; index < 4000; index++) {
+        const x = randomIntFromRange(-10000, 10000);
+        const y = randomIntFromRange(-5000, 5000);
+        const radius = Math.random() * 1.5;
+        distantStars.push(new FarStars(x, y, radius));
+    }
 
     for (let index = 0; index < 10; index++) {
         const radius = 20;
         const x = radius;
-        const y = (radius * 4) + index * 60;
+        const y = (radius * 2) + index * 60;
         const velocity = { x: 2, y: 5 };
         movingCircles.push(new MovingCircle(x, y, radius, velocity));
     }
@@ -145,9 +194,13 @@ function predictAllPaths() {
         }
     }
 
-    movingCircles.forEach((circle, i) => {
-        circle.predictedPath = paths[i];
-    });
+    for (let i = 0; i < movingCircles.length; i++) {
+        movingCircles[i].predictedPath = paths[i];
+
+        if (movingCircles[i] === followTarget) {
+            followTarget.predictedPath = paths[i];
+        }
+    }
 }
 
 
@@ -155,15 +208,25 @@ function predictAllPaths() {
 function animate() {
     requestAnimationFrame(animate);
 
-    content.clearRect(0, 0, innerWidth, innerHeight);
+    // Create a semi-transparent gradient overlay
+    const gradient = content.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0.1)");
+    gradient.addColorStop(1, "rgba(207, 0, 0, 0.1)");
+    content.fillStyle = gradient;
+    content.fillRect(0, 0, canvas.width, canvas.height);
+
+    distantStars.forEach(farStar => {
+        farStar.draw();
+    })
+
     if (followTarget) {
         camera.x = followTarget.x - canvas.width / 2;
         camera.y = followTarget.y - canvas.height / 2;
     }
 
     if (isPaused) {
-        console.log("is paused");
-        console.log(movingCircles[0].predictedPath.slice(0, 5));
+        // console.log("is paused");
+        // console.log(movingCircles[0].predictedPath.slice(0, 5));
 
         movingCircles.forEach(movingCircle => {
             movingCircle.drawPredictedPath();
@@ -207,7 +270,8 @@ window.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
         isPaused = !isPaused;
         if (isPaused) {
-            predictAllPaths();  // ← only calculate when entering pause mode
+            console.log('Pause');
+            predictAllPaths();
         }
     }
 

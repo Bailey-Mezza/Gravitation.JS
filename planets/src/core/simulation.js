@@ -1,5 +1,5 @@
 import { G } from '../logic/constants.js';
-import { randomIntFromRange, applyMutualGravity } from '../logic/utils.js';
+import { randomIntFromRange, applyMutualGravity, getDistance } from '../logic/utils.js';
 import FarStars from './stars.js';
 
 export function init(canvas) {
@@ -43,6 +43,11 @@ export function predictAllPaths(planets, suns = []) {
 
   [...suns, ...planets].forEach((body, i) => {
     body.predictedPath = paths[i];
+
+    //began working on perspective orbital paths, still needs work 
+    //if (allBodies[i] === followTarget) {
+    //         followTarget.predictedPath = paths[i];
+    //     }
   });
 }
 
@@ -126,11 +131,35 @@ export function animate({ content, canvas, camera, suns, planets, moons, distant
 
     for (let i = 0; i < allBodies.length; i++) {
       for (let j = i + 1; j < allBodies.length; j++) {
-        applyMutualGravity(allBodies[i], allBodies[j], G);
+        const bodyA = allBodies[i];
+        const bodyB = allBodies[j];
+
+        const distance = getDistance(
+          bodyA.position.x, bodyA.position.y,
+          bodyB.position.x, bodyB.position.y
+        );
+
+        const minDistance = (bodyA.radius || 0) + (bodyB.radius || 0);
+
+        if (distance <= minDistance) {
+          console.log("collision detected between", bodyA, "and", bodyB);
+          // May add features to merge bodies, bounce them, or stop them in the future
+        }
+
+        applyMutualGravity(bodyA, bodyB, G);
       }
     }
-    allBodies.forEach(body => body.update());
+    allBodies.forEach(body => {
+      body.update()
+      if (getDistance()) {
+        console.log("collision detected");
 
+      }
+    });
   }
+
   loop();
 }
+
+
+
