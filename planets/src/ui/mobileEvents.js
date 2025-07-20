@@ -19,19 +19,6 @@ const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
 const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 const instructionHelpTips = document.querySelector('#help-tips .dropdown-content');
 
-const mobileControls = `
-        <div><p><strong>Tap the play or pause button</strong> to pause or unpause the simulation.</p></div><hr />
-        <div><p><strong>Swipe</strong> to pan the camera (when paused).</p></div><hr />
-        <div><p><strong>Pinch in</strong> to zoom out, <strong>Pinch out</strong> to zoom in.</p></div><hr />
-        <div><p><strong>Double Tap</strong> a planet to follow it (when paused).</p></div><hr />
-        <div><p><strong>Long Press</strong> a planet to open the planet editor (when paused).</p></div><hr />
-        <div><p><strong>Three-finger Tap</strong> opens the preset menu (when paused).</p></div><hr />
-        <div><p><strong>Single Tap</strong> (when paused) opens new body menu.</p></div><hr />
-        <div><p><strong>Drag</strong> a planet to move it (when paused).</p></div>
-    `;
-
-    instructionHelpTips.innerHTML = mobileControls;
-
 export function registerMobileEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
     let lastTouchEvent = null;
     let draggingBody = null;
@@ -44,6 +31,18 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
     let allBodies = [];
     let lastTouchDistance = null;
     let lastPanTouch = null;
+
+    const mobileControls = `
+        <div><p><strong>Tap the play or pause button</strong> to pause or unpause the simulation.</p></div><hr />
+        <div><p><strong>Swipe</strong> to pan the camera (when paused).</p></div><hr />
+        <div><p><strong>Pinch in</strong> to zoom out, <strong>Pinch out</strong> to zoom in.</p></div><hr />
+        <div><p><strong>Double Tap</strong> a planet to follow it (when paused).</p></div><hr />
+        <div><p><strong>Long Press</strong> a planet to open the planet editor (when paused).</p></div><hr />
+        <div><p><strong>Three-finger Tap</strong> opens the preset menu (when paused).</p></div><hr />
+        <div><p><strong>Single Tap</strong> (when paused) opens new body menu.</p></div><hr />
+        <div><p><strong>Drag</strong> a planet to move it (when paused).</p></div>
+    `;
+    instructionHelpTips.innerHTML = mobileControls;
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
