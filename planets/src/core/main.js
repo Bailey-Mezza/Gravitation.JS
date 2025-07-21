@@ -95,16 +95,16 @@ async function start() {
   ({ suns, planets, distantStars } = initBodies(canvas));
   presets = await getPresets();
 
-  bindSliderToPrediction(planets, suns);
-
   const engine = new PhysicsEngine(suns, planets);
   const renderer = new Renderer(canvas, content, camera, scaleRef);
+
+  bindSliderToPrediction(engine);
 
   const register = /Mobi|Android/i.test(navigator.userAgent)
     ? registerMobileEvents
     : registerEvents;
 
-  register(planets, scaleRef, isPausedRef, followTarget, camera, suns, presets);
+  register(planets, scaleRef, isPausedRef, followTarget, camera, suns, presets, engine);
 
   function loop() {
     requestAnimationFrame(loop);

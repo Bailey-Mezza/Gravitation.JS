@@ -1,7 +1,6 @@
 import { canvas } from '../core/canvas.js';
 import { camera } from '../core/camera.js';
 import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
-import { predictAllPaths } from '../core/simulation.js';
 import Sun from '../bodies/sun.js';
 import Planet from '../bodies/planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
@@ -19,7 +18,7 @@ const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
 const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
 const instructionHelpTips = document.querySelector('#help-tips .dropdown-content');
 
-export function registerMobileEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
+export function registerMobileEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets, engine) {
     let lastTouchEvent = null;
     let draggingBody = null;
     let offsetX = 0;
@@ -31,6 +30,7 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
     let allBodies = [];
     let lastTouchDistance = null;
     let lastPanTouch = null;
+    let steps = 10000;
 
     const mobileControls = `
         <div><p><strong>Tap the play or pause button</strong> to pause or unpause the simulation.</p></div><hr />
@@ -88,7 +88,7 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
         // Reflect in your app
         updateEditorUI(null);
         addBodyMenu.style.display = 'none';
-        predictAllPaths(suns, planets);
+        engine.predictPaths(steps);
     }
 
     window.addEventListener('touchstart', (event) => {
@@ -164,7 +164,7 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
         if (draggingBody && isPausedRef.value) {
             draggingBody.position.x = worldTouch.x - offsetX;
             draggingBody.position.y = worldTouch.y - offsetY;
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps);
             didDrag = true;
             return; // prevent pan
         }
@@ -222,7 +222,7 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             const sunPos = { x: position.x, y: position.y };
             const sunVelocity = { x: 0, y: 0 };
             suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps);
             hideMenu();
         });
 
@@ -233,7 +233,7 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             const planetPos = { x: position.x, y: position.y };
             const planetVelocity = { x: 1, y: -1 };
             planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps);
             hideMenu();
         });
     }

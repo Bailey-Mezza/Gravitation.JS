@@ -1,3 +1,7 @@
+// /*
+// Old simulation logic, handled applying gravity, rendering planet movement and predicting paths in the same place and needed to be changed
+// to allow for decoupling of code.
+// */
 // import { G } from '../logic/constants.js';
 // import { randomIntFromRange, applyMutualGravity, getDistance } from '../logic/utils.js';
 // import FarStars from './stars.js';

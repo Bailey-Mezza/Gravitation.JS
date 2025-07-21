@@ -1,8 +1,8 @@
 import { canvas } from '../core/canvas.js';
 import { camera } from '../core/camera.js';
 import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils.js';
-import { predictAllPaths } from '../core/simulation.js';
 import Sun from '../bodies/sun.js';
+// import { predictAllPaths } from '../core/simulation.js';
 import Planet from '../bodies/planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
@@ -16,9 +16,10 @@ const presetMenu = document.getElementById('preset-menu-container');
 const presetBoxes = document.querySelectorAll('.preset-box');
 const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
 const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
+const stepsInput = document.getElementById('total-steps');
 
 
-export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets) {
+export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets, engine) {
     let draggingBody = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -28,11 +29,12 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
     let diagnosticsOpen = false;
     let position = {};
     let allBodies = [];
+    let steps = 10000;
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-    }); 
+    });
 
     window.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
@@ -41,7 +43,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
             updateEditorUI(null);
             addBodyMenu.style.display = 'none';
         }
-        predictAllPaths(suns, planets);
+        engine.predictPaths(steps);
         //console.log(event);
 
         if (!isPausedRef.value) return;
@@ -96,12 +98,12 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
                     } else {
                         selectedPlanet = body;
                         updateEditorUI(body);
-                        bindEditorEvents(body, planets, suns);
+                        bindEditorEvents(body, engine);
                     }
                     break;
                 }
             }
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps);
         }
 
         if (event.code === 'KeyP') {
@@ -129,7 +131,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
                     }
                 }
             }
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps)
         }
 
     });
@@ -197,7 +199,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
         if (draggingBody && isPausedRef.value) {
             draggingBody.position.x = worldMouse.x - offsetX;
             draggingBody.position.y = worldMouse.y - offsetY;
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps)
         }
     });
 
@@ -239,7 +241,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
             const sunPos = { x: position.x, y: position.y };
             const sunVelocity = { x: 0, y: 0 };
             suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps)
             hideMenu();
         });
 
@@ -250,7 +252,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
             const planetPos = { x: position.x, y: position.y };
             const planetVelocity = { x: 1, y: -1 };
             planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            predictAllPaths(suns, planets);
+            engine.predictPaths(steps)
             hideMenu();
         });
     }
@@ -320,7 +322,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
     presetBoxes.forEach(box => {
         box.addEventListener('click', () => {
             console.log("ello");
-            
+
             const presetKey = box.dataset.preset;
             const presetIndex = parseInt(presetKey.replace('preset', ''), 10) - 1;
             const preset = presets[presetIndex];
@@ -356,5 +358,5 @@ function loadSimulationState(state, suns, planets) {
     state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
     state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
 
-    predictAllPaths(suns, planets);
+    engine.predictPaths(steps)
 }
