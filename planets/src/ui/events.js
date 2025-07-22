@@ -148,6 +148,9 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
                 draggingBody = body;
                 offsetX = lastMouseEvent.x - body.position.x;
                 offsetY = lastMouseEvent.y - body.position.y;
+                if(addBodyMenu) {
+                    addBodyMenu.style.display = 'none';
+                }
                 break;
             }
         }

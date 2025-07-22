@@ -166,6 +166,9 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             draggingBody.position.y = worldTouch.y - offsetY;
             engine.predictPaths(steps);
             didDrag = true;
+            if(addBodyMenu) {
+                    addBodyMenu.style.display = 'none';
+                }
             return; // prevent pan
         }
 
