@@ -60,50 +60,68 @@ class MovingCircle {
 
 
     draw() {
-        content.beginPath();
-        content.arc(this.x - camera.x, this.y - camera.y, this.radius, 0, Math.PI * 2, false);
-        content.fillStyle = this.color;
-        content.fill();
-        content.closePath();
-    }
+    content.beginPath();
+    content.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    content.fillStyle = this.color;
+    content.fill();
+    content.closePath();
+}
 
 
-    drawPredictedPath() {
-        if (!this.predictedPath.length) return;
 
-        content.beginPath();
+ drawPredictedPath() {
+    if (this === followTarget) return;
 
-        //console.log("Follow target path length:", followTarget?.predictedPath?.length);
-        //console.log(followTarget);
-        
-        for (let i = 0; i < this.predictedPath.length; i++) {
-            let px = this.predictedPath[i].x;
-            let py = this.predictedPath[i].y;
+    // if (!this.predictedPath.length) {
+    //     console.log("No predicted path for circle");
+    //     return;
+    // }
 
-            //
-            // Apply relative shift if following a target
-            if (followTarget && followTarget.predictedPath.length > i) {
-                py -= followTarget.predictedPath[i].x - followTarget.x;
-                px -= followTarget.predictedPath[i].y - followTarget.y;
-            }
+    // if (this === followTarget) {
+    //     console.log("DRAWING PATH FOR FOLLOW TARGET");
+    // }
 
-            // Convert to camera coordinates
-            px -= camera.x;
-            py -= camera.y;
+    // if (this === movingCircles[0]) {
+    //     console.log("Sample path points:", this.predictedPath.slice(0, 5));
+    // }
 
-            if (i === 0) {
-                content.moveTo(px, py);
-            } else {
-                // console.log(px, py);
-                
-                content.lineTo(px, py);
-            }
+    content.beginPath();
+
+    for (let i = 0; i < this.predictedPath.length; i++) {
+        let px = this.predictedPath[i].x;
+        let py = this.predictedPath[i].y;
+
+        // Log relative shift from followTarget
+        if (followTarget && followTarget.predictedPath.length > i) {
+            const dx = followTarget.predictedPath[i].x - followTarget.predictedPath[0].x;
+            const dy = followTarget.predictedPath[i].y - followTarget.predictedPath[0].y;
+
+            // if (i < 5 && this === movingCircles[0]) {
+            //     console.log(`Step ${i} | dx: ${dx.toFixed(2)}, dy: ${dy.toFixed(2)}`);
+            // }
+
+            px -= dx;
+            py -= dy;
         }
 
-        content.strokeStyle = 'rgba(255, 255, 255, 1)';
-        content.stroke();
-        content.closePath();
+        // Camera shift
+        px -= camera.x;
+        py -= camera.y;
+
+        if (i === 0) {
+            content.moveTo(px, py);
+        } else {
+            content.lineTo(px, py);
+        }
     }
+
+    content.strokeStyle = 'rgba(255, 255, 255, 1)';
+    content.stroke();
+    content.closePath();
+}
+
+
+
 
 
     update(direction) {
@@ -118,6 +136,11 @@ class MovingCircle {
         } else {
             this.y -= this.velocity.y;
         }
+
+        // if (!followTarget) {
+        //     console.log(this.x);
+        // }
+        
     }
 }
 
@@ -208,45 +231,43 @@ function predictAllPaths() {
 function animate() {
     requestAnimationFrame(animate);
 
-    // Create a semi-transparent gradient overlay
+    // Background
     const gradient = content.createLinearGradient(0, 0, 0, canvas.height);
     gradient.addColorStop(0, "rgba(0, 0, 0, 0.1)");
     gradient.addColorStop(1, "rgba(207, 0, 0, 0.1)");
     content.fillStyle = gradient;
     content.fillRect(0, 0, canvas.width, canvas.height);
 
-    distantStars.forEach(farStar => {
-        farStar.draw();
-    })
-
+    // Apply camera shift
     if (followTarget) {
         camera.x = followTarget.x - canvas.width / 2;
         camera.y = followTarget.y - canvas.height / 2;
     }
 
-    if (isPaused) {
-        // console.log("is paused");
-        // console.log(movingCircles[0].predictedPath.slice(0, 5));
+    content.save();
+    content.translate(-camera.x, -camera.y); // <— GLOBAL camera
 
-        movingCircles.forEach(movingCircle => {
-            movingCircle.drawPredictedPath();
-            movingCircle.draw();
+    distantStars.forEach(farStar => farStar.draw());
+
+    if (isPaused) {
+        movingCircles.forEach(circle => {
+            circle.drawPredictedPath(); // drawn in world space
+            circle.draw();
         });
+        content.restore();
         return;
     }
 
+    movingCircles.forEach(circle => circle.update(direction));
 
-
-    movingCircles.forEach(movingCircle => {
-        movingCircle.update(direction);
-        // console.log("working");
-    });
+    content.restore();
 
     counter++;
     if (counter % 10 === 0) {
-        direction = !direction
+        direction = !direction;
     }
 }
+
 
 function getDistance(x1, y1, x2, y2) {
     return Math.hypot(x2 - x1, y2 - y1);

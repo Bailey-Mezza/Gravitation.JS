@@ -197,7 +197,7 @@ class Planet extends Body {
 function FarStars(x, y, radius) {
     this.x = x;
     this.y = y;
-    this.radius = radius;
+    this.radius = radius; 
 
     this.draw = () => {
         content.beginPath();

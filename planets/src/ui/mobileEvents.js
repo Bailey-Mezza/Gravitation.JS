@@ -6,6 +6,8 @@ import Planet from '../bodies/planet.js';
 import { updateEditorUI, bindEditorEvents } from './userControls.js';
 
 //Getting elements from HTML
+const LONG_PRESS_DURATION = 600; // milliseconds
+
 const pauseSymbol = document.getElementById('pause-symbol');
 const playSymbol = document.getElementById('play-symbol');
 const pausePlayContainer = document.getElementById('pause-play-symbol');
@@ -31,12 +33,12 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
     let lastTouchDistance = null;
     let lastPanTouch = null;
     let steps = 10000;
+    let longPressTimer = null;
 
     const mobileControls = `
         <div><p><strong>Tap the play or pause button</strong> to pause or unpause the simulation.</p></div><hr />
         <div><p><strong>Swipe</strong> to pan the camera (when paused).</p></div><hr />
         <div><p><strong>Pinch in</strong> to zoom out, <strong>Pinch out</strong> to zoom in.</p></div><hr />
-        <div><p><strong>Double Tap</strong> a planet to follow it (when paused).</p></div><hr />
         <div><p><strong>Long Press</strong> a planet to open the planet editor (when paused).</p></div><hr />
         <div><p><strong>Three-finger Tap</strong> opens the preset menu (when paused).</p></div><hr />
         <div><p><strong>Single Tap</strong> (when paused) opens new body menu.</p></div><hr />
@@ -118,6 +120,16 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
                 offsetX = worldTouch.x - body.position.x;
                 offsetY = worldTouch.y - body.position.y;
                 body.highlighted = true;
+                // Long press detection to open planet editor
+                if (draggingBody) {
+                    console.log("nice");
+
+                    longPressTimer = setTimeout(() => {
+                        updateEditorUI(draggingBody);
+                        bindEditorEvents(draggingBody, engine);
+                        engine.predictPaths(steps);
+                    }, LONG_PRESS_DURATION);
+                }
                 break;
             }
         }
@@ -166,9 +178,9 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             draggingBody.position.y = worldTouch.y - offsetY;
             engine.predictPaths(steps);
             didDrag = true;
-            if(addBodyMenu) {
-                    addBodyMenu.style.display = 'none';
-                }
+            if (addBodyMenu) {
+                addBodyMenu.style.display = 'none';
+            }
             return; // prevent pan
         }
 
@@ -182,6 +194,11 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
             lastPanTouch = { x: touch.clientX, y: touch.clientY };
         }
 
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+
         // const threshold = 60;
         // const isNearBottom = window.innerHeight - touch.clientY < threshold;
         // const popupButton = document.querySelector('.popup-button');
@@ -193,6 +210,10 @@ export function registerMobileEvents(planets, scaleRef, isPausedRef, followTarge
         draggingBody = null;
         lastTouchDistance = null;
         lastPanTouch = null;
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
     });
 
     window.addEventListener('touchend', function (event) {
