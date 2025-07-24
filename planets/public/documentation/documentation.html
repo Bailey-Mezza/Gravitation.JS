@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation for Gravitation</title>
+    <link rel="stylesheet" href="documentation.css" />
+</head>
+
+<div class="container">
+    <aside class="sidebar">
+        <h1>JS Physics Engine</h1>
+        <p>Welcome! This guide helps you integrate the physics renderer and engine into your project.</p>
+        <nav>
+            <a href="#setup">Setup</a>
+            <a href="#example">Usage Example</a>
+            <a href="#api">API Reference</a>
+        </nav>
+    </aside>
+
+    <main class="terminal">
+        <pre><code id="code-block">
+// Example: Import & Initialize
+import { PhysicsEngine } from './engine/physicsEngine.js';
+import { Renderer } from './ui/renderer.js';
+
+const canvas = document.getElementById('canvas');
+const engine = new PhysicsEngine([], []);
+const renderer = new Renderer(canvas, canvas.getContext('2d'), camera, { value: 1 });
+
+function loop() {
+  requestAnimationFrame(loop);
+  engine.simulateStep();
+  renderer.render([], [], null, false);
+}
+loop();
+      </code></pre>
+    </main>
+</div>
+
+<script src="documentation.js"></script>
+</body>
+
+</html>
