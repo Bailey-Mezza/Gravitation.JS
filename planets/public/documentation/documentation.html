@@ -10,11 +10,11 @@
 
 <div class="container">
     <aside class="sidebar">
-        <h1>JS Physics Engine</h1>
-        <p>Welcome! This guide helps you integrate the physics renderer and engine into your project.</p>
+        <h1>Gravitation.JS Implementation</h1>
+        <p id="instructions">Welcome! This guide helps you integrate the physics renderer and engine for Gravitation.JS into your own project.</p>
         <nav>
             <a href="#setup">Setup</a>
-            <a href="#example">Usage Example</a>
+            <a href="../index.html">Usage Example</a>
             <a href="#api">API Reference</a>
         </nav>
     </aside>
@@ -25,15 +25,27 @@
 import { PhysicsEngine } from './engine/physicsEngine.js';
 import { Renderer } from './ui/renderer.js';
 
+// Shared state
+let planets = [], suns = [], distantStars = [], presets = [];
+const scaleRef = { value: 1 };
+const isPausedRef = { value: false };
+const followTarget = { value: null };
+
 const canvas = document.getElementById('canvas');
-const engine = new PhysicsEngine([], []);
-const renderer = new Renderer(canvas, canvas.getContext('2d'), camera, { value: 1 });
+const engine = new PhysicsEngine(suns, planets);
+const renderer = new Renderer(canvas, content, camera, scaleRef);
 
 function loop() {
-  requestAnimationFrame(loop);
-  engine.simulateStep();
-  renderer.render([], [], null, false);
-}
+    requestAnimationFrame(loop);
+
+    if (!isPausedRef.value) {
+      engine.simulateStep();
+    }
+
+    const allBodies = [...suns, ...planets];
+    renderer.render(allBodies, distantStars, followTarget.value, isPausedRef.value);
+    renderer.checkCollisions(allBodies);
+  }
 loop();
       </code></pre>
     </main>

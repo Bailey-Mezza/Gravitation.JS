@@ -89,7 +89,6 @@ let planets = [], suns = [], distantStars = [], presets = [];
 const scaleRef = { value: 1 };
 const isPausedRef = { value: false };
 const followTarget = { value: null };
-const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
 
 async function start() {
   ({ suns, planets, distantStars } = initBodies(canvas));
