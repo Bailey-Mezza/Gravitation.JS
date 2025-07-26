@@ -15,6 +15,9 @@ body {
 
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 35%;
   background-color: rgba(30, 30, 30, 0.95);
   color: #00eaff;
@@ -26,6 +29,13 @@ body {
   color: #00eaff;
   text-shadow: 0 0 4px #00eaff;
 }
+
+
+.sidebar nav {
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
 
 .sidebar nav a {
   display: block;
@@ -42,6 +52,7 @@ body {
 
 
 .terminal {
+    position: relative;
   width: 65%;
   background-color: rgba(18, 18, 18, 0.9); /* slightly transparent */
   color: #c4e4ffcb;
@@ -62,3 +73,28 @@ code {
   word-break: break-word;
 }
 
+.nav-buttons {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.glow-button {
+  background: none;
+  color: #00eaff;
+  border: 2px solid #00eaff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.6),
+              inset 0 0 6px rgba(0, 234, 255, 0.3);
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+}
+
+.glow-button:hover {
+  background-color: rgba(0, 234, 255, 0.1);
+  transform: scale(1.05);
+}
