@@ -1,6 +1,116 @@
 
-document.getElementById("slide-description").textContent = "Step 1: Create an HTML file...";
-document.getElementById("code-block").textContent = `// your code here...`;
+const slideDescription = document.getElementById("slide-description");
+const codeDescription = document.getElementById("code-block");
+
+
+const slides = [
+    {
+        description: `
+      <p>Welcome! This guide helps you integrate the physics renderer and engine from <strong>Gravitation.JS</strong> into your own project.</p>
+      <p><strong>Step 1:</strong> Create an HTML file with a <code>&lt;canvas&gt;</code> element where the simulation will be drawn. You can set dimensions via attributes, CSS, or make it fullscreen in JS.</p>
+    `,
+        code: `<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Physics Project</title>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="600"></canvas>
+</body>
+</html>`
+    },
+
+    {
+        description: `
+      <p><strong>Step 2:</strong> Link a JavaScript file to your HTML using a <code>&lt;script type="module"&gt;</code> tag.</p>
+    `,
+        code: `<!-- Add this to the bottom of index.html -->
+<script type="module" src="main.js"></script>`
+    },
+    {
+        description: `
+      <p><strong>Step 3:</strong> Import the Engine and Renderer.</p>
+    `,
+        code: `<!-- Add this to main.js -->
+import { PhysicsEngine } from './engine/physicsEngine.js';
+import { Renderer } from './ui/renderer.js';`
+    },
+    {
+        description: `
+      <p><strong>Step 4:</strong> Set up the canvas, camera, scale, and any objects like planets or suns.</p>
+    `,
+        code: `<!-- Add this to main.js -->
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const scaleRef = { value: 1 };
+const isPausedRef = { value: false };
+const camera = { x: 0, y: 0 };
+const planets = [];
+const suns = [];`
+    },
+    {
+        description: `
+      <p><strong>Step 5:</strong> Create and Configure Engine and Renderer.</p>
+    `,
+        code: `<!-- Add this to main.js -->
+const engine = new PhysicsEngine(suns, planets);
+const renderer = new Renderer(canvas, ctx, camera, scaleRef);`
+    },
+];
+
+function refreshNav() {
+    if (currentSlide === 0) {
+        prevSlideBtn.classList.remove('active');
+        prevSlideBtn.classList.add('inactive');
+    } else {
+        prevSlideBtn.classList.remove('inactive');
+        prevSlideBtn.classList.add('active');
+    }
+
+    if (currentSlide === slides.length - 1) {
+        nextSlideBtn.classList.remove('active');
+        nextSlideBtn.classList.add('inactive');
+    } else {
+        nextSlideBtn.classList.remove('inactive');
+        nextSlideBtn.classList.add('active');
+    }
+}
+
+
+let currentSlide = 0;
+
+function renderSlide(index) {
+    const slide = slides[index];
+    slideDescription.innerHTML = slide.description;
+    codeDescription.textContent = slide.code;
+}
+
+const nextSlideBtn = document.getElementById('nextSlide');
+const prevSlideBtn = document.getElementById('prevSlide');
+
+nextSlideBtn.addEventListener('click', () => {
+    if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        renderSlide(currentSlide);
+        refreshNav();
+    }
+});
+
+prevSlideBtn.addEventListener('click', () => {
+    if (currentSlide > 0) {
+        currentSlide--;
+        renderSlide(currentSlide);
+        refreshNav();
+    }
+});
+
+
+renderSlide(currentSlide);
+refreshNav();
+
 
 // 🔹 Step 1: Create Your HTML File
 // Create an HTML file with a <canvas> element where the simulation will be drawn.

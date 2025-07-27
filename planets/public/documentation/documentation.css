@@ -61,6 +61,7 @@ body {
   font-size: 0.95rem;
   letter-spacing: 1.5px;
   transition: all 0.3s ease;
+  z-index: 1;
 }
 
 
@@ -79,6 +80,38 @@ code {
   right: 2rem;
   display: flex;
   gap: 1rem;
+}
+
+#nextSlide {
+    z-index: 2;
+}
+
+#prevSlide {
+    z-index: 0;
+}
+
+#prevSlide.inactive {
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+#prevSlide.active {
+  z-index: 2;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+#nextSlide.inactive {
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+#nextSlide.active {
+  z-index: 2;
+  pointer-events: auto;
+  opacity: 1;
 }
 
 .glow-button {

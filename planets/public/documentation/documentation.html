@@ -11,8 +11,7 @@
 <div class="container">
     <aside class="sidebar">
         <h1>Gravitation.JS Implementation</h1>
-        <p id="slide-description">Welcome! This guide helps you integrate the physics renderer and engine from
-            Gravitation.JS into your own project.</p>
+        <p id="slide-description">Something has gone wrong, please try again later or contact the creator.</p>
         <nav>
             <a href="#setup">Setup</a>
             <a href="../index.html">Usage Example</a>
@@ -27,32 +26,6 @@
 
     <main class="terminal">
         <pre><code id="code-block">
-// Example: Import & Initialize
-import { PhysicsEngine } from './engine/physicsEngine.js';
-import { Renderer } from './ui/renderer.js';
-
-// Shared state
-let planets = [], suns = [], distantStars = [], presets = [];
-const scaleRef = { value: 1 };
-const isPausedRef = { value: false };
-const followTarget = { value: null };
-
-const canvas = document.getElementById('canvas');
-const engine = new PhysicsEngine(suns, planets);
-const renderer = new Renderer(canvas, content, camera, scaleRef);
-
-function loop() {
-    requestAnimationFrame(loop);
-
-    if (!isPausedRef.value) {
-      engine.simulateStep();
-    }
-
-    const allBodies = [...suns, ...planets];
-    renderer.render(allBodies, distantStars, followTarget.value, isPausedRef.value);
-    renderer.checkCollisions(allBodies);
-  }
-loop();
       </code></pre>
     </main>
 </div>
