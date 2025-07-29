@@ -146,3 +146,25 @@ code {
   opacity: 1;
 }
 
+.view-toggle-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 8rem;
+  z-index: 5;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.view-toggle-btn:hover {
+  opacity: 1;
+}
+
+#demoCanvas {
+  position: absolute;
+  top: 4rem;
+  left: 2rem;
+  z-index: 4;
+  border: 2px solid #00eaff;
+  box-shadow: 0 0 12px rgba(0, 234, 255, 0.3);
+}

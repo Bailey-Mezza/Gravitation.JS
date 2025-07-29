@@ -165,6 +165,26 @@ document.getElementById('copyButton').addEventListener('click', () => {
     });
 });
 
+const toggleViewBtn = document.getElementById('toggleViewBtn');
+const canvas = document.getElementById('demoCanvas');
+const codeBlock = document.getElementById('code-block');
+
+let showingCanvas = false;
+
+toggleViewBtn.addEventListener('click', () => {
+  showingCanvas = !showingCanvas;
+
+  if (showingCanvas) {
+    canvas.style.display = 'block';
+    codeBlock.parentElement.style.display = 'none';
+    toggleViewBtn.textContent = 'Go Back to Code';
+  } else {
+    canvas.style.display = 'none';
+    codeBlock.parentElement.style.display = 'block';
+    toggleViewBtn.textContent = 'See It in Action';
+  }
+});
+
 
 
 renderSlide(currentSlide);
