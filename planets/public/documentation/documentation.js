@@ -150,6 +150,22 @@ prevSlideBtn.addEventListener('click', () => {
     }
 });
 
+document.getElementById('copyButton').addEventListener('click', () => {
+  const codeText = document.getElementById('code-block').innerText;
+
+  navigator.clipboard.writeText(codeText)
+    .then(() => {
+      console.log('Code copied!');
+      const btn = document.getElementById('copyButton');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    })
+    .catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+});
+
+
 
 renderSlide(currentSlide);
 refreshNav();
