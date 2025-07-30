@@ -82,13 +82,10 @@ code {
   gap: 1rem;
 }
 
-#nextSlide {
-    z-index: 2;
+#showAll {
+  z-index: 2;
 }
 
-#prevSlide {
-    z-index: 0;
-}
 
 #prevSlide.inactive {
   z-index: 0;

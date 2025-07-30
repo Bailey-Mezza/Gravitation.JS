@@ -102,6 +102,9 @@ loop();`
     },
 ];
 
+const nextSlideBtn = document.getElementById('nextSlide');
+const prevSlideBtn = document.getElementById('prevSlide');
+const showAllBtn = document.getElementById('showAll');
 
 
 function refreshNav() {
@@ -131,8 +134,19 @@ function renderSlide(index) {
     codeDescription.textContent = slide.code;
 }
 
-const nextSlideBtn = document.getElementById('nextSlide');
-const prevSlideBtn = document.getElementById('prevSlide');
+function showAllSlides() {
+  let slideCounter = 0;
+  slideDescription.innerHTML = "This is the full version of the javascript code, you can paste it directly into your javascript file or make changes and add you own logic."
+  codeDescription.textContent = "";
+  slides.forEach(slide => {
+    if (slideCounter > 1) {
+      codeDescription.textContent += slide.code;
+    }
+    slideCounter++;
+  });
+}
+
+
 
 nextSlideBtn.addEventListener('click', () => {
     if (currentSlide < slides.length - 1) {
@@ -148,6 +162,10 @@ prevSlideBtn.addEventListener('click', () => {
         renderSlide(currentSlide);
         refreshNav();
     }
+});
+
+showAllBtn.addEventListener('click', () => {
+  showAllSlides();
 });
 
 document.getElementById('copyButton').addEventListener('click', () => {
@@ -189,3 +207,5 @@ toggleViewBtn.addEventListener('click', () => {
 
 renderSlide(currentSlide);
 refreshNav();
+
+//GPL - GNU
