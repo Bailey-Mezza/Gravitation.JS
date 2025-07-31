@@ -1,15 +1,14 @@
-
 const slideDescription = document.getElementById("slide-description");
 const codeDescription = document.getElementById("code-block");
 
 
 const slides = [
-    {
-        description: `
+  {
+    description: `
       <p>Welcome! This guide helps you integrate the physics renderer and engine from <strong>Gravitation.JS</strong> into your own project.</p>
       <p><strong>Step 1:</strong> Create a HTML file with a <code>&lt;canvas&gt;</code> element where the simulation will be drawn. You can set dimensions via attributes, CSS, or make it fullscreen in JS.</p>
     `,
-        code: `<!-- index.html -->
+    code: `<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,31 +19,31 @@ const slides = [
   <canvas id="canvas" width="800" height="600"></canvas>
 </body>
 </html>`
-    },
+  },
 
-    {
-        description: `
+  {
+    description: `
       <p><strong>Step 2:</strong> Link a JavaScript file to your HTML using a <code>&lt;script type="module"&gt;</code> tag.</p>
     `,
-        code: `<!-- Add this to the bottom of index.html -->
+    code: `<!-- Add this to the bottom of index.html -->
 <script type="module" src="main.js"></script>`
-    },
-    {
-        description: `
+  },
+  {
+    description: `
       <p><strong>Step 3:</strong> Import the Engine, Renderer, as well as any Celestial Body classes you intend to use.</p>
     `,
-        code: `<!-- Add this to main.js -->
+    code: `<!-- Add this to main.js -->
 import { PhysicsEngine } from '/planets/src/core/physicsEngine.js';
 import { Renderer } from '/planets/src/ui/renderer.js';
 import Sun from '/planets/src/bodies/sun.js';
 import Planet from '/planets/src/bodies/planet.js';`
 
-    },
-    {
-        description: `
+  },
+  {
+    description: `
       <p><strong>Step 4:</strong> Set up the canvas, camera, scale, and any objects like planets or suns.</p>
     `,
-        code: `<!-- Add this to main.js -->
+    code: `<!-- Add this to main.js -->
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -53,20 +52,20 @@ const isPausedRef = { value: false };
 const camera = { x: 0, y: 0 };
 const planets = [];
 const suns = [];`
-    },
-    {
-        description: `
+  },
+  {
+    description: `
       <p><strong>Step 5:</strong> Create and Configure Engine and Renderer.</p>
     `,
-        code: `<!-- Optionally, add this to main.js -->
+    code: `<!-- Optionally, add this to main.js -->
 const engine = new PhysicsEngine(suns, planets);
 const renderer = new Renderer(canvas, ctx, camera, scaleRef);`
-    },
-    {
-        description: `
+  },
+  {
+    description: `
       <p><strong>Step 6:</strong> If you want, add a sun and planet to your project.</p>
     `,
-        code: `<!-- Add this to main.js -->
+    code: `<!-- Add this to main.js -->
 suns.push(new Sun(
   10000,                    // mass
   { x: 0, y: 0 },           // position
@@ -80,14 +79,14 @@ planets.push(new Planet(
   { x: 0, y: 2 },           // velocity
   10                        // radius
 ));`
-    },
+  },
 
-    {
-        description: `
+  {
+    description: `
       <p><strong>Step 7:</strong> Animate Your Simulation! Start a simple loop to update and render each frame. <br> <br>
 <button onclick="window.location.href='./test.html'" class="glow-button">See It in Action</button></p>
     `,
-        code: `<!-- Add this to main.js -->
+    code: `<!-- Add this to main.js -->
 function loop() {
   requestAnimationFrame(loop);
 
@@ -99,7 +98,7 @@ function loop() {
 }
 
 loop();`
-    },
+  },
 ];
 
 const nextSlideBtn = document.getElementById('nextSlide');
@@ -108,35 +107,35 @@ const showAllBtn = document.getElementById('showAll');
 
 
 function refreshNav() {
-    if (currentSlide === 0) {
-        prevSlideBtn.classList.remove('active');
-        prevSlideBtn.classList.add('inactive');
-    } else {
-        prevSlideBtn.classList.remove('inactive');
-        prevSlideBtn.classList.add('active');
-    }
+  if (currentSlide === 0) {
+    prevSlideBtn.classList.remove('active');
+    prevSlideBtn.classList.add('inactive');
+  } else {
+    prevSlideBtn.classList.remove('inactive');
+    prevSlideBtn.classList.add('active');
+  }
 
-    if (currentSlide === slides.length - 1) {
-        nextSlideBtn.classList.remove('active');
-        nextSlideBtn.classList.add('inactive');
-    } else {
-        nextSlideBtn.classList.remove('inactive');
-        nextSlideBtn.classList.add('active');
-    }
+  if (currentSlide === slides.length - 1) {
+    nextSlideBtn.classList.remove('active');
+    nextSlideBtn.classList.add('inactive');
+  } else {
+    nextSlideBtn.classList.remove('inactive');
+    nextSlideBtn.classList.add('active');
+  }
 }
 
 
 let currentSlide = 0;
 
 function renderSlide(index) {
-    const slide = slides[index];
-    slideDescription.innerHTML = slide.description;
-    codeDescription.textContent = slide.code;
+  const slide = slides[index];
+  slideDescription.innerHTML = slide.description;
+  codeDescription.textContent = slide.code;
 }
 
 function showAllSlides() {
   let slideCounter = 0;
-  slideDescription.innerHTML = "This is the full version of the javascript code, you can paste it directly into your javascript file or make changes and add you own logic."
+  slideDescription.innerHTML = "This is the full version of the javascript code, you can paste it directly into your javascript fil or make changes and add you own logic."
   codeDescription.textContent = "";
   slides.forEach(slide => {
     if (slideCounter > 1) {
@@ -149,19 +148,19 @@ function showAllSlides() {
 
 
 nextSlideBtn.addEventListener('click', () => {
-    if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        renderSlide(currentSlide);
-        refreshNav();
-    }
+  if (currentSlide < slides.length - 1) {
+    currentSlide++;
+    renderSlide(currentSlide);
+    refreshNav();
+  }
 });
 
 prevSlideBtn.addEventListener('click', () => {
-    if (currentSlide > 0) {
-        currentSlide--;
-        renderSlide(currentSlide);
-        refreshNav();
-    }
+  if (currentSlide > 0) {
+    currentSlide--;
+    renderSlide(currentSlide);
+    refreshNav();
+  }
 });
 
 showAllBtn.addEventListener('click', () => {
@@ -196,12 +195,50 @@ toggleViewBtn.addEventListener('click', () => {
     canvas.style.display = 'block';
     codeBlock.parentElement.style.display = 'none';
     toggleViewBtn.textContent = 'Go Back to Code';
+    // const ctx = canvas.getContext('2d');
+
+    // const scaleRef = { value: 1 };
+    // const isPausedRef = { value: false };
+    // const camera = { x: 0, y: 0 };
+    // const planets = [];
+    // const suns = [];
+
+    // const engine = new PhysicsEngine(suns, planets);
+    // const renderer = new Renderer(canvas, ctx, camera, scaleRef);
+
+    // suns.push(new Sun(
+    //   10000,                    // mass
+    //   { x: 0, y: 0 },           // position
+    //   { x: 0, y: 0 },           // velocity
+    //   50                        // radius
+    // ));
+
+    // planets.push(new Planet(
+    //   1,                        // mass
+    //   { x: 300, y: 0 },         // position
+    //   { x: 0, y: 2 },           // velocity
+    //   10                        // radius
+    // ));
+
+
+    // function loop() {
+    //   requestAnimationFrame(loop);
+
+    //   if (!isPausedRef.value) {
+    //     engine.simulateStep();
+    //   }
+
+    //   renderer.render([...suns, ...planets], [], null, isPausedRef.value);
+    // }
+
+    // loop();
   } else {
     canvas.style.display = 'none';
     codeBlock.parentElement.style.display = 'block';
     toggleViewBtn.textContent = 'See It in Action';
   }
 });
+
 
 
 
