@@ -1,7 +1,7 @@
 import { randomIntFromRange } from '../logic/utils.js';
 import FarStars from './stars.js';
 
-export function initBodies(canvas) {
+export function initBodies() {
   const distantStars = [];
 
   for (let i = 0; i < 4000; i++) {
@@ -14,7 +14,6 @@ export function initBodies(canvas) {
   return {
     suns: [],
     planets: [],
-    moons: [],
     distantStars
   };
 }

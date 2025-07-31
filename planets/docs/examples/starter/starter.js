@@ -1,3 +1,7 @@
+import { PhysicsEngine } from '/planets/src/core/physicsEngine.js';
+import { Renderer } from '/planets/src/ui/renderer.js';
+import Sun from '/planets/src/bodies/sun.js';
+import Planet from '/planets/src/bodies/planet.js';
 const slideDescription = document.getElementById("slide-description");
 const codeDescription = document.getElementById("code-block");
 
@@ -83,8 +87,7 @@ planets.push(new Planet(
 
   {
     description: `
-      <p><strong>Step 7:</strong> Animate Your Simulation! Start a simple loop to update and render each frame. <br> <br>
-<button onclick="window.location.href='./test.html'" class="glow-button">See It in Action</button></p>
+      <p><strong>Step 7:</strong> Animate Your Simulation! Start a simple loop to update and render each frame.</p>
     `,
     code: `<!-- Add this to main.js -->
 function loop() {
@@ -187,6 +190,8 @@ const canvas = document.getElementById('demoCanvas');
 const codeBlock = document.getElementById('code-block');
 
 let showingCanvas = false;
+const planets = [];
+const suns = [];
 
 toggleViewBtn.addEventListener('click', () => {
   showingCanvas = !showingCanvas;
@@ -195,47 +200,50 @@ toggleViewBtn.addEventListener('click', () => {
     canvas.style.display = 'block';
     codeBlock.parentElement.style.display = 'none';
     toggleViewBtn.textContent = 'Go Back to Code';
-    // const ctx = canvas.getContext('2d');
+    
+    const ctx = canvas.getContext('2d');
 
-    // const scaleRef = { value: 1 };
-    // const isPausedRef = { value: false };
-    // const camera = { x: 0, y: 0 };
-    // const planets = [];
-    // const suns = [];
+    const scaleRef = { value: 1 };
+    const isPausedRef = { value: false };
+    const camera = { x: 0, y: 0 };
+    
 
-    // const engine = new PhysicsEngine(suns, planets);
-    // const renderer = new Renderer(canvas, ctx, camera, scaleRef);
+    const engine = new PhysicsEngine(suns, planets);
+    const renderer = new Renderer(canvas, ctx, camera, scaleRef);
 
-    // suns.push(new Sun(
-    //   10000,                    // mass
-    //   { x: 0, y: 0 },           // position
-    //   { x: 0, y: 0 },           // velocity
-    //   50                        // radius
-    // ));
+    suns.push(new Sun(
+      10000,                    // mass
+      { x: 0, y: 0 },           // position
+      { x: 0, y: 0 },           // velocity
+      50                        // radius
+    ));
 
-    // planets.push(new Planet(
-    //   1,                        // mass
-    //   { x: 300, y: 0 },         // position
-    //   { x: 0, y: 2 },           // velocity
-    //   10                        // radius
-    // ));
+    planets.push(new Planet(
+      1,                        // mass
+      { x: 300, y: 0 },         // position
+      { x: 0, y: 2 },           // velocity
+      10                        // radius
+    ));
 
 
-    // function loop() {
-    //   requestAnimationFrame(loop);
+    function loop() {
+      requestAnimationFrame(loop);
 
-    //   if (!isPausedRef.value) {
-    //     engine.simulateStep();
-    //   }
+      if (!isPausedRef.value) {
+        engine.simulateStep();
+      }
 
-    //   renderer.render([...suns, ...planets], [], null, isPausedRef.value);
-    // }
+      renderer.render([...suns, ...planets], [], null, isPausedRef.value);
+    }
 
-    // loop();
+    loop();
   } else {
     canvas.style.display = 'none';
     codeBlock.parentElement.style.display = 'block';
     toggleViewBtn.textContent = 'See It in Action';
+    suns.pop();
+    planets.pop();
+    console.log(suns);
   }
 });
 

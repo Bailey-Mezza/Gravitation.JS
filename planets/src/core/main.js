@@ -91,7 +91,7 @@ const isPausedRef = { value: false };
 const followTarget = { value: null };
 
 async function start() {
-  ({ suns, planets, distantStars } = initBodies(canvas));
+  ({ suns, planets, distantStars } = initBodies());
   presets = await getPresets();
 
   const engine = new PhysicsEngine(suns, planets);
@@ -111,7 +111,8 @@ async function start() {
     if (!isPausedRef.value) {
       engine.simulateStep();
     } else if (planets.length > 0 && !planets[0].predictedPath) {
-      engine.predictPaths(10000);
+      let stepNumber = 10000; 
+      engine.predictPaths(stepNumber);
     }
 
     const allBodies = [...suns, ...planets];
