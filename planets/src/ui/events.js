@@ -324,7 +324,9 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
 
     presetBoxes.forEach(box => {
         box.addEventListener('click', () => {
-            console.log("ello");
+            //Uncaught ReferenceError: engine is not defined
+            // at loadSimulationState (events.js:364:5)
+            // at HTMLDivElement.<anonymous> (events.js:334:17)
 
             const presetKey = box.dataset.preset;
             const presetIndex = parseInt(presetKey.replace('preset', ''), 10) - 1;

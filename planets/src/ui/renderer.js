@@ -27,11 +27,16 @@ export class Renderer {
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+    ctx.rotate(this.angle); // this.angle should be increasing in loop
+    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
+
+    ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
     ctx.scale(scale, scale);
     ctx.translate(-this.camera.x, -this.camera.y);
 
     distantStars.forEach(star => star.draw(ctx));
 
+    //fps calculations
     const now = performance.now();
     const delta = now - this.lastFrameTime;
     const fps = 1000 / delta;
