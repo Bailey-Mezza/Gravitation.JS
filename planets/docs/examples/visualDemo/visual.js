@@ -69,7 +69,11 @@ document.getElementById('copyButton').addEventListener('click', () => {
     });
 });
 
-document.getElementById('code-block').textContent = `const canvas = document.getElementById('starfieldCanvas');
+document.getElementById('code-block').textContent = `import { Renderer } from '/planets/src/ui/renderer.js';
+import FarStars from '/planets/src/core/stars.js';
+import { randomIntFromRange } from '/planets/src/logic/utils.js';
+
+const canvas = document.getElementById('starfieldCanvas');
 const ctx = canvas.getContext('2d');
 let mouseDown = false;
 
