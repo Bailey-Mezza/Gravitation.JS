@@ -1,45 +1,75 @@
 import { Renderer } from '/planets/src/ui/renderer.js';
 import FarStars from '/planets/src/core/stars.js';
-import { randomIntFromRange } from '/planets/src/logic/utils.js';
+import { randomIntFromRange, getWorldMousePosition } from '/planets/src/logic/utils.js';
 import { PhysicsEngine } from '/planets/src/core/physicsEngine.js';
 import Sun from '/planets/src/bodies/sun.js';
 import Planet from '/planets/src/bodies/planet.js';
-
-const cameraSpeed = 10;
-const cameraKeys = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false,
-    w: false,
-    a: false,
-    s: false,
-    d: false,
-    q: false
-};
-
-
-window.addEventListener('keydown', e => {
-    if (e.key in cameraKeys) cameraKeys[e.key] = true;
-});
-
-window.addEventListener('keyup', e => {
-    if (e.key in cameraKeys) cameraKeys[e.key] = false;
-});
-
+import { camera } from '/planets/src/core/camera.js';
 
 const canvas = document.getElementById('starfieldCanvas');
 const ctx = canvas.getContext('2d');
 
 const distantStars = [];
-
 const scaleRef = { value: 1 };
 const isPausedRef = { value: false };
-const camera = { x: 510, y: 300 };
+// const camera = { x: -400, y: 25 };
 const planets = [];
 const suns = [];
 let safeZone = [];
-let player = [];
+let player = {
+    x: -600,
+    y: 25,
+}
+let spaceship = null;
+let gameState = "prelaunch"; // Options: "prelaunch", "launched", "won"
+const spaceshipSprite = new Image();
+spaceshipSprite.src = 'shuttleSprite.png';
+
+const mouse = { x: 0, y: 0 };
+
+canvas.addEventListener('mousemove', e => {
+    const worldPos = getWorldMousePosition(e, scaleRef.value);
+    mouse.x = worldPos.x + 250;
+    mouse.y = worldPos.y;
+});
+
+
+canvas.addEventListener('click', () => {
+    if (gameState === 'prelaunch') {
+        const dx = mouse.x - player.x;
+        const dy = mouse.y - player.y;
+        const scaleFactor = 0.01;
+
+        // Create spaceship
+        spaceship = new Spaceship(
+            1,
+            { x: player.x, y: player.y },
+            { x: dx * scaleFactor, y: dy * scaleFactor },
+            spaceshipSprite
+        );
+
+        planets.push(spaceship);
+        gameState = 'launched'
+    }
+});
+
+//Spaceship object to be used
+class Spaceship extends Planet {
+    constructor(mass, position, velocity, sprite) {
+        super(mass, position, velocity, 10); // radius doesn't matter much
+        this.sprite = sprite;
+    }
+
+    draw() {
+        const angle = Math.atan2(this.velocity.y, this.velocity.x);
+
+        ctx.save();
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(angle);
+        ctx.drawImage(this.sprite, -25, -15, 50, 30); // adjust based on sprite size
+        ctx.restore();
+    }
+}
 
 function init() {
     const canvasWidth = canvas.width + 1000;
@@ -53,32 +83,27 @@ function init() {
 
     suns.push(new Sun(
         10000,                    // mass
-        { x: 343.78190209378863, y: 286.5159146151228 },           // position
+        { x: 0, y: 0 },           // position
         { x: 0.15457709523485677, y: -1.499185796718796 },           // velocity
         50                        // radius
     ));
 
     suns.push(new Sun(
         10000,                    // mass
-        { x: 684.2180979062115, y: 303.48408538487655 },           // position
+        { x: 340.43619581242287, y: 16.96817076975375 },           // position
         { x: -0.15457709523485677, y: 1.499185796718796 },           // velocity
         50                        // radius
     ));
 
     safeZone = {
-        x: 1300,
+        x: 1000,
         y: -1000,
         width: 1000,
         height: 2000
     };
 
-    player =  {
-        x: -200,
-        y: 300,
-        velocityX: 0,
-        velocityY: 0,
-        radius: 10
-    }
+    camera.x = -500;
+    camera.y = player.y;
 
 }
 
@@ -88,11 +113,6 @@ const engine = new PhysicsEngine(suns, planets);
 function loop() {
     requestAnimationFrame(loop);
 
-    if (cameraKeys.ArrowUp || cameraKeys.w) camera.y -= cameraSpeed;
-    if (cameraKeys.ArrowDown || cameraKeys.s) camera.y += cameraSpeed;
-    if (cameraKeys.ArrowLeft || cameraKeys.a) camera.x -= cameraSpeed;
-    if (cameraKeys.ArrowRight || cameraKeys.d) camera.x += cameraSpeed;
-
     if (!isPausedRef.value) {
         engine.simulateStep();
     }
@@ -101,17 +121,45 @@ function loop() {
 
     // Draw the safe zone
     ctx.save();
-    ctx.fillStyle = 'rgba(0, 255, 157, 0.3)';
+    ctx.fillStyle = 'rgba(0, 255, 157, 0.1)';
     ctx.fillRect(safeZone.x, safeZone.y, safeZone.width, safeZone.height);
     ctx.restore();
 
-    //draw player
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-    ctx.fillStyle ='rgb(255, 255, 255)';
-    ctx.fill();
-    ctx.closePath();
+
+    if (gameState === 'prelaunch') {
+        //draw line
+        ctx.beginPath();
+        ctx.moveTo(player.x, player.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // draw arrowhead
+        const dx = mouse.x - player.x;
+        const dy = mouse.y - player.y;
+        const angle = Math.atan2(dy, dx);
+        const headlen = 10;
+        const endX = mouse.x;
+        const endY = mouse.y;
+
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0,255,0,0.8)';
+        ctx.fill();
+
+        //draw player starter
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.drawImage(spaceshipSprite, -25, -15, 50, 30); // adjust based on sprite size
+        ctx.restore();
+    } else if (gameState === 'launched' && spaceship) {
+        camera.x = spaceship.position.x;
+        camera.y = spaceship.position.y;
+    }
 }
 
 init();
