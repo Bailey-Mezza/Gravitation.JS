@@ -89,9 +89,10 @@ export class Renderer {
 
         const minDistance = (bodyA.radius || 0) + (bodyB.radius || 0);
         if (distance <= minDistance) {
-          console.log("Collision detected between", bodyA, "and", bodyB);
+          return { bodyA, bodyB };
         }
       }
     }
-  }
+    return null;
+  } 
 }
