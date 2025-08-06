@@ -128,8 +128,8 @@ function init() {
     ));
 
     safeZone = {
-        x: 1000,
-        y: -1000,
+        x: worldBounds.xMax,
+        y: -worldBounds.yMax,
         width: 1000,
         height: 2000
     };
@@ -328,7 +328,6 @@ const ctx = canvas.getContext('2d');
 const distantStars = [];
 const scaleRef = { value: 1 };
 const isPausedRef = { value: false };
-// const camera = { x: -400, y: 25 };
 const planets = [];
 const suns = [];
 let safeZone = [];
@@ -349,6 +348,15 @@ let gameState = "prelaunch";
 const spaceshipSprite = new Image();
 spaceshipSprite.src = 'shuttleSprite.png';
 
+let gameIntroText = &#96You've been knocked off orbit and have encountered a binary star system that threatens to send you further into deep space. Can you use your knowledge and the last of your fuel to slingshot yourself as fast as you can into safe space again? Best of luck captain.&#96;
+
+let displayedText = '';
+let textIndex = 0;
+let introFinished = false;
+let showTimer = false;
+let launchTime = null;
+let finalTime = null;
+
 const mouse = { x: 0, y: 0 };
 
 canvas.addEventListener('mousemove', e => {
@@ -359,23 +367,41 @@ canvas.addEventListener('mousemove', e => {
 
 
 canvas.addEventListener('click', () => {
-    if (gameState === 'prelaunch') {
+    if (gameState === 'prelaunch' && introFinished) {
         const dx = mouse.x - player.x;
         const dy = mouse.y - player.y;
-        const scaleFactor = 0.01;
 
-        // Create spaceship
         spaceship = new Spaceship(
             1,
             { x: player.x, y: player.y },
-            { x: dx * scaleFactor, y: dy * scaleFactor },
+            { x: dx * 0.01, y: dy * 0.01 },
             spaceshipSprite
         );
 
         planets.push(spaceship);
-        gameState = 'launched'
+        gameState = 'launched';
+        launchTime = performance.now();
+        showTimer = true;
+    }
+
+});
+
+window.addEventListener('keydown', () => {
+    if (!introFinished) {
+        displayedText = gameIntroText;
+        textIndex = gameIntroText.length;
+        introFinished = true;
     }
 });
+
+canvas.addEventListener('click', () => {
+    if (!introFinished) {
+        displayedText = gameIntroText;
+        textIndex = gameIntroText.length;
+        introFinished = true;
+    }
+});
+
 
 //Spaceship object to be used
 class Spaceship extends Planet {
@@ -396,8 +422,6 @@ class Spaceship extends Planet {
 }
 
 function init() {
-    const canvasWidth = canvas.width + 1000;
-    const canvasHeight = canvas.height + 1000;
     for (let index = 0; index < 2000; index++) {
         const x = randomIntFromRange(worldBounds.xMin, worldBounds.xMax);
         const y = randomIntFromRange(worldBounds.yMin, worldBounds.yMax);
@@ -431,11 +455,53 @@ function init() {
 
 }
 
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line, x, y);
+}
+
+
 const renderer = new Renderer(canvas, ctx, camera, scaleRef);
 const engine = new PhysicsEngine(suns, planets);
 
 function loop() {
     requestAnimationFrame(loop);
+
+    if (!introFinished) {
+        // Typewriter effect
+        if (textIndex < gameIntroText.length) {
+            displayedText += gameIntroText[textIndex];
+            textIndex++;
+        }
+
+        // Draw intro text box
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(50, canvas.height - 150, canvas.width - 100, 100);
+
+        ctx.fillStyle = 'white';
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        drawWrappedText(ctx, displayedText, 60, canvas.height - 400, canvas.width - 120, 20);
+        ctx.restore();
+
+        return; // Skip rest of game loop until intro is done
+    }
+
 
     if (!isPausedRef.value) {
         engine.simulateStep();
@@ -444,6 +510,7 @@ function loop() {
         if (collision) {
             isPausedRef.value = true;
             gameState = 'gameover';
+            finalTime = (performance.now() - launchTime) / 1000;
         }
         if (spaceship) {
             const { x, y } = spaceship.position;
@@ -454,13 +521,35 @@ function loop() {
             ) {
                 isPausedRef.value = true;
                 gameState = 'gameover';
+                finalTime = (performance.now() - launchTime) / 1000;
             } else if (x > worldBounds.xMax) {
                 isPausedRef.value = true;
                 gameState = 'victory';
+                finalTime = (performance.now() - launchTime) / 1000;
             }
         }
     }
+
     renderer.render([...suns, ...planets], distantStars, null, isPausedRef.value);
+
+    if (showTimer) {
+        let timeToShow;
+
+        if (gameState === 'launched') {
+            const now = performance.now();
+            timeToShow = (now - launchTime) / 1000;
+        } else if (finalTime != null) {
+            timeToShow = finalTime;
+        }
+
+        if (timeToShow != null) {
+            ctx.save();
+            ctx.fillStyle = 'white';
+            ctx.font = '20px monospace';
+            ctx.fillText(&#96Time: &#36;{timeToShow.toFixed(2)}s&#96, camera.x - canvas.width / 2 + 20, camera.y - canvas.height / 2 + 30);
+            ctx.restore();
+        }
+    }
 
     // Draw the safe zone
     ctx.save();
