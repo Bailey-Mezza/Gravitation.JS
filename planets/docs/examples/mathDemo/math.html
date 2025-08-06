@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math Demo - Gravitation.JS</title>
+    <link rel="stylesheet" href="../example.css" />
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Left side: Code / Sidebar -->
+        <aside class="sidebar">
+            <h1>Math Demo</h1>
+            <p>This demo uses <strong>the engine only</strong> to simulate a terminal with stats showing .</p>
+
+            <button id="copyButton" class="glow-button copy-btn">Copy Code</button>
+            <pre><code id="code-block"></code></pre>
+
+            <nav>
+                <a href="../../index.html">⬅ Back to All Demos</a>
+            </nav>
+        </aside>
+
+        <!-- Right side: Terminal -->
+        <main class="canvas-container">
+            <section class="term">
+                <header class="term__bar">
+                    <h1>TERMINAL</h1>
+                    <!-- clock -->
+                    <div id="utc-clock">UTC — --:--:--</div>
+                </header>
+
+                <div class="term__grid">
+                    <section class="card">
+                        <h2>FOCUS BODY</h2>
+                        <dl class="kv">
+                            <div>
+                                <dt>Name</dt>
+                                <dd>—</dd>
+                            </div>
+                            <div>
+                                <dt>Mass</dt>
+                                <dd>— kg</dd>
+                            </div>
+                            <div>
+                                <dt>Radius</dt>
+                                <dd>— m</dd>
+                            </div>
+                            <div>
+                                <dt>Velocity</dt>
+                                <dd>(—, —) m/s</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="card">
+                        <h2>LOCAL SYSTEM — BODIES</h2>
+                        <table class="t">
+                            <thead>
+                                <tr>
+                                    <th class="left">Name</th>
+                                    <th>Dist (m)</th>
+                                    <th>Rel v (m/s)</th>
+                                    <th>Mass (kg)</th>
+                                    <th>Radius (m)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="left">—</td>
+                                    <td class="left">—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="math.js"></script>
+
+</body>

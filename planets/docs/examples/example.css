@@ -52,9 +52,10 @@ body {
 
 
 .terminal {
-    position: relative;
+  position: relative;
   width: 65%;
-  background-color: rgba(18, 18, 18, 0.9); /* slightly transparent */
+  background-color: rgba(18, 18, 18, 0.9);
+  /* slightly transparent */
   color: #c4e4ffcb;
   padding: 2rem;
   overflow: auto;
@@ -118,7 +119,7 @@ code {
   border-radius: 8px;
   padding: 0.5rem 1rem;
   box-shadow: 0 0 8px rgba(0, 234, 255, 0.6),
-              inset 0 0 6px rgba(0, 234, 255, 0.3);
+    inset 0 0 6px rgba(0, 234, 255, 0.3);
   cursor: pointer;
   letter-spacing: 1.5px;
   transition: all 0.3s ease;
@@ -182,4 +183,92 @@ code {
   border: 1px solid #00eaff;
   overflow-x: auto;
   color: #00eaff;
+}
+
+.term {
+  --bg: #08130d;
+  --fg: #1eff63;
+  --accent: #ffd966;
+  font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  color: var(--fg);
+  background: var(--bg);
+  padding: 12px;
+  border: 1px solid #0d2a1b;
+  border-radius: 8px;
+  width: 700px;
+  height: 600px;
+}
+
+.term__bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.term__bar h1 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: .06em;
+  color: var(--accent);
+}
+
+
+.term__grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+
+.card {
+  border: 1px solid #0d2a1b;
+  border-radius: 6px;
+  padding: 8px;
+  background: rgba(0, 0, 0, .2);
+}
+
+.card h2 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.kv {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.kv>div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.kv dt {
+  opacity: .85;
+}
+
+.kv dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.t {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.t th,
+.t td {
+  padding: 6px 4px;
+  border-bottom: 1px dashed rgba(30, 255, 99, .25);
+  text-align: right;
+  font-size: 13px;
+}
+
+.t .left {
+  text-align: left;
 }
