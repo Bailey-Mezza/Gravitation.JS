@@ -12,14 +12,15 @@ function updateUTCClock() {
 }
 
 
-
+console.log("ello");
 
 
 
 const isPausedRef = { value: false };
-const engine = new PhysicsEngine(suns, planets);
 const planets = [];
 const suns = [];
+const engine = new PhysicsEngine(suns, planets);
+
 
 suns.push(new Sun(
     10000,                    // mass
@@ -42,7 +43,7 @@ function loop() {
     if (!isPausedRef.value) {
         engine.simulateStep();
     }
-    console.log("ello");
+    
     
 }
 

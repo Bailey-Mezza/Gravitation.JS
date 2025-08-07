@@ -10,7 +10,8 @@ export default class Sun extends Body {
     this.highlighted = false;
   }
 
-  draw() {
+  draw(ctx = content) {
+    if (!ctx) return;            
     const gradient = content.createRadialGradient(
       this.position.x, this.position.y, 0,
       this.position.x, this.position.y, this.radius * 2.5

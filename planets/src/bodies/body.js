@@ -9,7 +9,8 @@ export default class Body {
     this.color = 'rgb(237, 223, 133)';
   }
 
-  draw() {
+  draw(ctx = content) {
+    if (!ctx) return;            
     content.beginPath();
     content.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
     content.fillStyle = this.color;
