@@ -4,8 +4,8 @@ import { lightenColor, shadowColor } from '../logic/utils.js';
 
 
 export default class Sun extends Body {
-  constructor(mass, position, velocity, radius) {
-    super(mass, position, velocity, radius);
+  constructor(name, mass, position, velocity, radius) {
+    super(name, mass, position, velocity, radius);
     this.color = 'rgb(237, 223, 133)';
     this.highlighted = false;
   }

@@ -4,8 +4,8 @@ import { content } from '../core/canvas.js';
 import { randomIntFromRange } from '../logic/utils.js';
 
 export default class Planet extends Body {
-  constructor(mass, position, velocity, radius) {
-    super(mass, position, velocity, radius);
+  constructor(name, mass, position, velocity, radius) {
+    super(name, mass, position, velocity, radius);
     this.color = colorArray[randomIntFromRange(0, colorArray.length - 1)];
     this.highlighted = false;
   }

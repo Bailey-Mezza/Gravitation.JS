@@ -29,7 +29,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
     let diagnosticsOpen = false;
     let position = {};
     let allBodies = [];
-    let steps = 10000;
+    let steps =  1000;
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
