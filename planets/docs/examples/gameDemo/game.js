@@ -612,3 +612,18 @@ function loop() {
 
 init();
 loop();`;
+
+document.getElementById("expandButton").addEventListener("click", function() {
+  const container = document.querySelector(".code-container");
+  container.classList.toggle("fullscreen");
+  
+  // Change button text depending on state
+  this.textContent = container.classList.contains("fullscreen") ? "Close" : "Expand";
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.querySelector(".code-container").classList.remove("fullscreen");
+    document.getElementById("expandButton").textContent = "Expand";
+  }
+});

@@ -285,11 +285,9 @@ code {
 
 .code-container {
   position: relative;
-  background: #1e1e1e;
-  color: white;
-  padding: 10px;
+  padding: 5px;
   border-radius: 6px;
-  max-height: 300px; /* collapsed height */
+  max-height: 500px;
   overflow: auto;
 }
 
@@ -321,8 +319,8 @@ code {
 
 .code-container.fullscreen .expand-btn {
   position: absolute; /* in fullscreen, float in top-right */
-  top: 5px;
-  right: 5px;
+  top: 5%;
+  right: 5%;
   margin-top: 0;
 }
 

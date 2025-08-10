@@ -1,43 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stress Demo - Gravitation.JS</title>
-  <link rel="stylesheet" href="../example.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stress Demo - Gravitation.JS</title>
+    <link rel="stylesheet" href="../example.css" />
 </head>
+
 <body>
 
-<div class="container">
-  <aside class="sidebar">
-    <h1>Stress Demo</h1>
-    <p>This demo uses <strong>only the renderer</strong> to create a dynamic starfield. No physics engine involved.</p>
+    <div class="container">
+        <aside class="sidebar">
+            <h1>Stress Demo</h1>
+            <p>This demo uses <strong>only the renderer</strong> to create a dynamic starfield. No physics engine
+                involved.</p>
 
-    <button id="copyButton" class="glow-button copy-btn">Copy Code</button>
-    <div class="code-container">
-  <button id="expandButton" class="glow-button expand-btn">Expand</button>
-  <pre><code id="code-block">
-// Example code
-function hello() {
-  console.log("Hello, World!");
-}
-  </code></pre>
-</div>
+            <button id="copyButton" class="glow-button copy-btn">Copy Code</button>
+            <div class="code-container">
+                <button id="expandButton" class="glow-button expand-btn">Expand</button>
+                <pre><code id="code-block"></code></pre>
+            </div>
 
 
-    <nav>
-      <a href="../../index.html">⬅ Back to All Demos</a>
-    </nav>
-  </aside>
+            <nav>
+                <a href="../../index.html">⬅ Back to All Demos</a>
+            </nav>
+        </aside>
 
-  <!-- Right side: Canvas -->
-  <main class="canvas-container">
-    <p id="fps"></p>
-    <canvas id="starfieldCanvas" width="800" height="600"></canvas>
-  </main>
-</div>
+        <!-- Right side: Canvas -->
+        <main class="canvas-container">
+            <p id="fps"></p>
+            <canvas id="starfieldCanvas" width="800" height="600"></canvas>
+        </main>
+    </div>
 
-<script type="module" src="stress.js"></script>
+    <script type="module" src="stress.js"></script>
 
 </body>
-
