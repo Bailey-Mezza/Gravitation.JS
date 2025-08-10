@@ -36,7 +36,7 @@ const slides = [
     description: `
       <p><strong>Step 3:</strong> Import the Engine, Renderer, as well as any Celestial Body classes you intend to use.</p>
     `,
-    code: `<!-- Add this to main.js -->
+    code: `//Add this to main.js
 import { PhysicsEngine } from '/planets/src/core/physicsEngine.js';
 import { Renderer } from '/planets/src/ui/renderer.js';
 import Sun from '/planets/src/bodies/sun.js';
@@ -47,7 +47,7 @@ import Planet from '/planets/src/bodies/planet.js';`
     description: `
       <p><strong>Step 4:</strong> Set up the canvas, camera, scale, and any objects like planets or suns.</p>
     `,
-    code: `<!-- Add this to main.js -->
+    code: `//Add this to main.js
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -61,7 +61,7 @@ const suns = [];`
     description: `
       <p><strong>Step 5:</strong> Create and Configure Engine and Renderer.</p>
     `,
-    code: `<!-- Optionally, add this to main.js -->
+    code: `//Add this to main.js
 const engine = new PhysicsEngine(suns, planets);
 const renderer = new Renderer(canvas, ctx, camera, scaleRef);`
   },
@@ -69,7 +69,7 @@ const renderer = new Renderer(canvas, ctx, camera, scaleRef);`
     description: `
       <p><strong>Step 6:</strong> If you want, add a sun and planet to your project.</p>
     `,
-    code: `<!-- Add this to main.js -->
+    code: `//Add this to main.js
 suns.push(new Sun(
   10000,                    // mass
   { x: 0, y: 0 },           // position
@@ -89,7 +89,7 @@ planets.push(new Planet(
     description: `
       <p><strong>Step 7:</strong> Animate Your Simulation! Start a simple loop to update and render each frame.</p>
     `,
-    code: `<!-- Add this to main.js -->
+    code: `//Add this to main.js
 function loop() {
   requestAnimationFrame(loop);
 

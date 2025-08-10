@@ -2,6 +2,7 @@ import { content } from '../core/canvas.js';
 
 export default class Body {
   constructor(mass, position, velocity, radius) {
+    this.name;
     this.mass = mass;
     this.position = position;
     this.velocity = velocity;

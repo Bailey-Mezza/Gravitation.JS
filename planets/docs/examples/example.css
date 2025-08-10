@@ -272,3 +272,57 @@ code {
 .t .left {
   text-align: left;
 }
+
+#fps {
+  position: absolute; 
+  top: 10px; 
+  left: 35%; 
+  color: white; 
+  font-family: monospace;
+  padding: 5px;
+  border: white 2px solid;
+}
+
+.code-container {
+  position: relative;
+  background: #1e1e1e;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  max-height: 300px; /* collapsed height */
+  overflow: auto;
+}
+
+.code-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 98vw;
+  height: 94vh;
+  max-height: none;
+  background: #1e1e1e;
+  padding: 20px;
+  z-index: 10;
+}
+
+.code-container pre {
+  margin: 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.expand-btn {
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 5px;
+  display: inline-block;
+  position: static; /* default: below code */
+}
+
+.code-container.fullscreen .expand-btn {
+  position: absolute; /* in fullscreen, float in top-right */
+  top: 5px;
+  right: 5px;
+  margin-top: 0;
+}
+
