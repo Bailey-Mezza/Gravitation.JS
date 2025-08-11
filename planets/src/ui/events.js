@@ -4,7 +4,7 @@ import { getDistance, getWorldMousePosition, getAllBodies } from '../logic/utils
 import Sun from '../bodies/sun.js';
 // import { predictAllPaths } from '../core/simulation.js';
 import Planet from '../bodies/planet.js';
-import { updateEditorUI, bindEditorEvents } from './userControls.js';
+import { updateEditorUI, bindEditorEvents, getPredictionSteps } from './userControls.js';
 
 //Getting elements from HTML
 const pauseSymbol = document.getElementById('pause-symbol');
@@ -16,8 +16,6 @@ const presetMenu = document.getElementById('preset-menu-container');
 const presetBoxes = document.querySelectorAll('.preset-box');
 const addSunOption = document.querySelector('#addBody p:nth-of-type(1)');
 const addPlanetOption = document.querySelector('#addBody p:nth-of-type(2)');
-const stepsInput = document.getElementById('total-steps');
-
 
 export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, cameraRef, suns, presets, engine) {
     let draggingBody = null;
@@ -29,7 +27,6 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
     let diagnosticsOpen = false;
     let position = {};
     let allBodies = [];
-    let steps =  1000;
 
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
@@ -37,13 +34,13 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
     });
 
     window.addEventListener('keydown', (event) => {
-        if (event.code === 'Space') {
+        if (event.code === 'Space') { 
             isPausedRef.value = !isPausedRef.value;
             showSymbol(isPausedRef.value);
             updateEditorUI(null);
             addBodyMenu.style.display = 'none';
         }
-        engine.predictPaths(steps);
+        engine.predictPaths(getPredictionSteps());
         //console.log(event);
 
         if (!isPausedRef.value) return;
@@ -103,7 +100,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
                     break;
                 }
             }
-            engine.predictPaths(steps);
+            engine.predictPaths(getPredictionSteps());
         }
 
         if (event.code === 'KeyP') {
@@ -131,7 +128,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
                     }
                 }
             }
-            engine.predictPaths(steps)
+            engine.predictPaths(getPredictionSteps());
         }
 
     });
@@ -202,7 +199,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
         if (draggingBody && isPausedRef.value) {
             draggingBody.position.x = worldMouse.x - offsetX;
             draggingBody.position.y = worldMouse.y - offsetY;
-            engine.predictPaths(steps)
+            engine.predictPaths(getPredictionSteps());
         }
     });
 
@@ -244,7 +241,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
             const sunPos = { x: position.x, y: position.y };
             const sunVelocity = { x: 0, y: 0 };
             suns.push(new Sun(sunMass, sunPos, sunVelocity, sunRadius));
-            engine.predictPaths(steps)
+            engine.predictPaths(getPredictionSteps());
             hideMenu();
         });
 
@@ -255,7 +252,7 @@ export function registerEvents(planets, scaleRef, isPausedRef, followTargetRef, 
             const planetPos = { x: position.x, y: position.y };
             const planetVelocity = { x: 1, y: -1 };
             planets.push(new Planet(planetMass, planetPos, planetVelocity, planetRadius));
-            engine.predictPaths(steps)
+            engine.predictPaths(getPredictionSteps());
             hideMenu();
         });
     }
@@ -363,5 +360,5 @@ function loadSimulationState(state, suns, planets) {
     state.suns.forEach(s => suns.push(new Sun(s.mass, s.position, s.velocity, s.radius)));
     state.planets.forEach(p => planets.push(new Planet(p.mass, p.position, p.velocity, p.radius)));
 
-    engine.predictPaths(steps)
+    engine.predictPaths(getPredictionSteps());
 }

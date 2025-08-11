@@ -10,7 +10,7 @@ const stepsSlider = document.getElementById('total-steps');
 const stepsValueDisplay = document.getElementById('steps-value');
 
 //gets the prediction steps from the slider value 
-function getPredictionSteps() {
+export function getPredictionSteps() {
     return stepsSlider ? parseInt(stepsSlider.value, 10) : 10000;
 }
 

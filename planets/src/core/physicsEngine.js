@@ -21,7 +21,7 @@ export class PhysicsEngine {
     bodies.forEach(body => body.update());
   }
 
-  predictPaths(steps = 10000) {
+  predictPaths(steps) {
     const clones = this.getAllBodies().map(b => b.clone());
     const paths = clones.map(() => []);
 

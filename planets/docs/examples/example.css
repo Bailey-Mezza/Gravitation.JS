@@ -137,11 +137,6 @@ code {
   z-index: 5;
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.copy-btn:hover {
-  opacity: 1;
 }
 
 .view-toggle-btn {
@@ -275,8 +270,8 @@ code {
 
 #fps {
   position: absolute; 
-  top: 10px; 
-  left: 35%; 
+  top: 1rem;
+  left: 28rem;
   color: white; 
   font-family: monospace;
   padding: 5px;
@@ -300,7 +295,7 @@ code {
   max-height: none;
   background: #1e1e1e;
   padding: 20px;
-  z-index: 10;
+  z-index: 2;
 }
 
 .code-container pre {
@@ -314,13 +309,14 @@ code {
   cursor: pointer;
   margin-top: 5px;
   display: inline-block;
-  position: static; /* default: below code */
+  position: static;
 }
 
 .code-container.fullscreen .expand-btn {
-  position: absolute; /* in fullscreen, float in top-right */
-  top: 5%;
-  right: 5%;
-  margin-top: 0;
+  position: absolute;
+  top: 4rem;
+  right: 2rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
 }
 
