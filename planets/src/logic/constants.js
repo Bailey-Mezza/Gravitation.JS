@@ -1,18 +1,22 @@
+// Gravitation strength for this simulation (pixels / tick^2).
+// Tuned for dt=1 and scale=1; higher = faster orbits, lower = slower.
 export const G = 0.2;
+// Palette for planet colors (used for random assignment).
+// Keep high contrast with the background; add/remove as needed.
 export const colorArray = [
-  'rgb(244, 162, 97)',  // #F4A261
-  'rgb(42, 157, 143)',  // #2A9D8F
-  'rgb(58, 134, 255)',  // #3A86FF
-  'rgb(231, 111, 81)',  // #E76F51
-  'rgb(255, 190, 11)',  // #FFBE0B
-  'rgb(251, 86, 7)',    // #FB5607
-  'rgb(131, 56, 236)',  // #8338EC
-  'rgb(255, 0, 110)',   // #FF006E
-  'rgb(106, 153, 78)',  // #6A994E
-  'rgb(212, 163, 115)', // #D4A373
-  'rgb(17, 138, 178)',  // #118AB2
-  'rgb(7, 59, 76)',     // #073B4C
-  'rgb(242, 132, 130)', // #F28482
-  'rgb(141, 153, 174)'  // #8D99AE
+  'rgb(244, 162, 97)', 
+  'rgb(42, 157, 143)', 
+  'rgb(58, 134, 255)',  
+  'rgb(231, 111, 81)',  
+  'rgb(255, 190, 11)', 
+  'rgb(251, 86, 7)',    
+  'rgb(131, 56, 236)',  
+  'rgb(255, 0, 110)',   
+  'rgb(106, 153, 78)',  
+  'rgb(212, 163, 115)', 
+  'rgb(17, 138, 178)',  
+  'rgb(7, 59, 76)',    
+  'rgb(242, 132, 130)', 
+  'rgb(141, 153, 174)'  
 ];
 
