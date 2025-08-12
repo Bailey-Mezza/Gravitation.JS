@@ -6,34 +6,41 @@ export class Renderer {
     this.ctx = context;
     this.camera = camera;
     this.scaleRef = scaleRef;
-
+ // Basic FPS tracking (smoothed over last N frames)
     this.fpsArray = [];
     this.maxArraySize = 30;
     this.lastFrameTime = performance.now();
     this.lastUpdateTime = performance.now();
+    this.angle = 0;
   }
 
   render(bodies, distantStars, followTarget, isPaused) {
     const ctx = this.ctx;
     const scale = this.scaleRef.value;
 
+    // If following a body, keep camera centered on it
     if (followTarget) {
       this.camera.x = followTarget.position.x;
       this.camera.y = followTarget.position.y;
     }
 
+    // Clear with alpha (low alpha = motion trails when running)
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = `rgba(0, 0, 0, ${isPaused ? 1 : 0.05})`;
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+    // World transform: rotate around screen center (optional)
+    //have to set this.angle manually
     ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
     ctx.rotate(this.angle); // this.angle should be increasing in loop
     ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
 
+    // Camera + zoom (center screen, scale, then move world by camera)
     ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
     ctx.scale(scale, scale);
     ctx.translate(-this.camera.x, -this.camera.y);
 
+     // Background stars
     distantStars.forEach(star => star.draw(ctx));
 
     //fps calculations
@@ -49,7 +56,7 @@ export class Renderer {
 
     const avgFps = this.fpsArray.reduce((a, b) => a + b, 0) / this.fpsArray.length;
 
-    // DOM overlays (optional UI)
+    // DOM overlays, this UI is optional
     const fpsWarning = document.getElementById('fps-warning');
     if (fpsWarning) {
       fpsWarning.style.display = avgFps < 30 ? 'block' : 'none';
@@ -68,14 +75,17 @@ export class Renderer {
       totalBodiesData.textContent = `Total Bodies: ${bodies.length}`;
     }
 
+    // Draw predicted paths while paused, then draw the actual bodies
     bodies.forEach(body => {
       if (isPaused && body.predictedPath) {
-        body.drawPredictedPath(followTarget, this.canvas, ctx);
+        body.drawPredictedPath();
       }
       body.draw(ctx);
     });
   }
 
+  // Returns the first colliding pair in the simulation (O(n^2)); null if none
+  //May have future updates to further collision detection 
   checkCollisions(bodies) {
     for (let i = 0; i < bodies.length; i++) {
       for (let j = i + 1; j < bodies.length; j++) {
