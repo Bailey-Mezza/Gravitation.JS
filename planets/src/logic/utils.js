@@ -61,7 +61,7 @@ export function hexToRGB(hex) {
 
 export function rgbToHex(rgb) {
   const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-  if (!match) return '#000000'; // fallback
+  if (!match) return '#FFFFFF'; // fallback
 
   const [r, g, b] = match.slice(1).map(Number);
 
