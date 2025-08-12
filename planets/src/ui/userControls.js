@@ -37,6 +37,11 @@ export function bindEditorEvents(body, engine) {
     };
 
     massInput.oninput = () => {
+        //found bug during testing that caused simulation to stop working
+        if (massInput.value < 1) {
+            body.mass = 1;
+            console.log("A body cannot have no or negative mass, setting mass to 1");
+        }
         body.mass = parseFloat(massInput.value);
         updateAndPredict();
     };
