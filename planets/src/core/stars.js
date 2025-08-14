@@ -1,5 +1,6 @@
 import { content } from './canvas.js';
 
+// Small decorative stars for simulation.
 export default function FarStars(x, y, radius) {
   this.x = x;
   this.y = y;

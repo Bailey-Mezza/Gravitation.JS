@@ -19,6 +19,7 @@ export default class Planet extends Body {
   constructor(mass, position, velocity, radius) {
     super(mass, position, velocity, radius);
     this.color = colorArray[randomIntFromRange(0, colorArray.length - 1)];
+     // When true, the planet renders in white to stand out (selection/hover).
     this.highlighted = false;
   }
 
