@@ -1,5 +1,4 @@
-# GravityTesting
-Testing my javascript to see if I can make a 2D gravity simulator with planets
+# Gravitation.JS
 
 
 Under GNU GENERAL PUBLIC LICENSE
