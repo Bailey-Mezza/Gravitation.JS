@@ -1,6 +1,10 @@
 // Gravitation strength for this simulation (pixels / tick^2).
 // Tuned for dt=1 and scale=1; higher = faster orbits, lower = slower.
 export const G = 0.2;
+// Simulation timestep (ticks).  
+// dt=1 means velocities are in pixels/tick and accelerations in pixels/tick^2.  
+// Lower dt = more accurate but slower simulation; higher dt = faster but less stable.  
+export const dt = 1;
 // Palette for planet colors (used for random assignment).
 // Keep high contrast with the background; add/remove as needed.
 export const colorArray = [

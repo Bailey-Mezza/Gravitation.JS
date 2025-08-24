@@ -15,7 +15,7 @@
  * along with Gravitate.JS.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { G } from '../logic/constants.js';
+import { G, dt } from '../logic/constants.js';
 import { applyMutualGravity } from '../logic/utils.js';
 
 export class PhysicsEngine {
@@ -34,7 +34,7 @@ export class PhysicsEngine {
     //nested for loop to apply gravity for each unique pair
     for (let i = 0; i < bodies.length; i++) {
       for (let j = i + 1; j < bodies.length; j++) {
-        applyMutualGravity(bodies[i], bodies[j], G);
+        applyMutualGravity(bodies[i], bodies[j], G, dt);
       }
     }
     bodies.forEach(body => body.update());
@@ -49,7 +49,7 @@ export class PhysicsEngine {
       // Gravity between clone pairs, same nested loop as simulateStep
       for (let i = 0; i < clones.length; i++) {
         for (let j = i + 1; j < clones.length; j++) {
-          applyMutualGravity(clones[i], clones[j], G);
+          applyMutualGravity(clones[i], clones[j], G, dt);
         }
       }
 

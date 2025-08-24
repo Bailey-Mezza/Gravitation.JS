@@ -1,4 +1,5 @@
 import { content } from '../core/canvas.js';
+import { dt } from '../logic/constants.js';
 
 /**
  * Simple 2D circular body rendered on a Canvas.
@@ -40,8 +41,8 @@ export default class Body {
 
   //simple update integrator, updates every iteration
   update() {
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+    this.position.x += this.velocity.x * dt;
+    this.position.y += this.velocity.y * dt;
     this.draw();
   }
 
